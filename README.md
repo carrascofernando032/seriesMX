@@ -193,7 +193,7 @@ ts.plot((serie_ts<- ts(data = (fix_fbcf%>%
 
 grid(col = "grey", lty = "dotted")
 
-legend("topleft",legend=c("Tipo de cambio (FIX)","FBCF, a.e."),
+legend("topright",legend=c("Tipo de cambio (FIX)","FBCF, a.e."),
                           col=c("#FF1493", "black"),
        lty = c(1, 2),
        seg.len = 1,
@@ -201,7 +201,7 @@ legend("topleft",legend=c("Tipo de cambio (FIX)","FBCF, a.e."),
        xpd = TRUE,
        inset = c(0.02, 0.02),
        bty = "n",
-       y.intersp = 0.8)
+       y.intersp = 0.7)
 
 mtext("Fuente: elaboración propia con datos del BIE y el SIE.", 
       side=1, line=4.1, adj=0, cex=0.85)
