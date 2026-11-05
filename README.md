@@ -82,7 +82,7 @@ token = "ejemplo_f1a58e29e-8796-409c-9aeb-3206889b2067",
 formato_resp = "?type=json")
 ```
 
-\#Especificaciones sobre las funciones api_bie y api_sie.
+## Especificaciones sobre las funciones api_bie y api_sie.
 
 - Un data frame en R es una estructura de datos bidimensional (en forma
   de tabla con filas y columnas) que permite almacenar datos
@@ -102,8 +102,7 @@ formato_resp = "?type=json")
   frames que resulten de utilizar api_bie o api_sie para que el ususario
   pueda juntar todas las series utilizando la paquetería Tidyverse.
 
-\##Generar una tabla y visualización de los indicadores provenientes del
-BIE y SIE.
+## Generar una tabla y visualización de los indicadores provenientes del BIE y SIE.
 
 Para utilizar left_join() de Tidyverse, es necesario que las variables
 “fecha” tengan el mismo formato y, preferentemente, la misma clase
@@ -197,8 +196,8 @@ grid(col = "grey", lty = "dotted")
 legend("topleft",legend=c("Tipo de cambio (FIX)","FBCF, a.e."),
                           col=c("#FF1493", "black"),
        lty = c(1, 2),
-       seg.len = 1.5,
-       cex = 0.85,
+       seg.len = 1,
+       cex = 0.8,
        xpd = TRUE,
        inset = c(0.02, 0.02),
        bty = "n",
