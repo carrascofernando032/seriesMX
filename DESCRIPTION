@@ -1,0 +1,11 @@
+Package: seriesMX
+Title: Series temporales de la economía mexicana a través de API'S  
+Version: 0.0.0.9000
+Authors@R: 
+    person("Fernando", "Carrasco Gutierrez", , "carrascofernando032@gmail.com", role = c("aut", "cre"))
+Description: Consulta, actualización y manipulación de información económica y social de México mediante las API del SIE (Banco de México) y el BIE (INEGI).
+License: MIT + file LICENSE
+Config/roxygen2/version: 8.1.0
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+Imports: dplyr, moments, stats, httr, jsonlite
