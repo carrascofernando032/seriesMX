@@ -36,9 +36,10 @@ Cualquier lenguaje de programación que tenga la capacidad de conectarse a inter
 
 Antes de usar seriesMX, es indispensable que consulte las páginas web oficiales donde es posible generar los token correspondientes: 
 
-INEGI (BIE/BISE): 
+- INEGI (BIE/BISE): 
 https://www.inegi.org.mx/app/desarrolladores/generatoken/Usuarios/token_Verify
-Banco de México (SIE):
+
+- Banco de México (SIE):
 https://www.banxico.org.mx/SieAPIRest/service/v1/token
 
 Nota: en la práctica es posible generar diversos token, su propósito sólo es controlar el flujo de acceso desde los servidores de INEGI y Banxico.
@@ -60,19 +61,19 @@ Este es un ejemplo básico que muestra cómo utilizar el token dentro de la URL 
 ```{r ejemplo-api-bie, eval=FALSE}
 library(seriesMX)
 api_bie(url = paste0("https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/736183/es/00/false/BIE-BISE/2.0/"),
-token = "f1a58e29e-8796-409c-9aeb-3206889b2005",
+token = "ejemplo_f1a58e29e-8796-409c-9aeb-3206889b2067",
 formato_resp = "?type=json")
 ```
 
-Un data frame en R es una estructura de datos bidimensional (en forma de tabla con filas y columnas) que permite almacenar datos heterogéneos.
+#Especificaciones sobre las funciones api_bie y api_sie.
 
-Es el objeto más utilizado para el análisis estadístico y la manipulación de información en R, ya que funciona de forma muy similar a una hoja de cálculo de Excel.
+- Un data frame en R es una estructura de datos bidimensional (en forma de tabla con filas y columnas) que permite almacenar datos heterogéneos.Es el objeto más utilizado para el análisis estadístico y la manipulación de información en R, ya que funciona de forma muy similar a una hoja de cálculo de Excel.
 
-El propósito del "producto final" de las funciones api_bie o api_sie es proporcionar un data frame con el que se puedan implementar las herramientas intermedias del lenguaje de programación R con énfasis en la limpieza, manipulación de datos y visualizaciones avanzadas.
+- El propósito del "producto final" de las funciones api_bie o api_sie es proporcionar un data frame con el que se puedan implementar las herramientas intermedias del lenguaje de programación R con énfasis en la limpieza, manipulación de datos y visualizaciones avanzadas.
 
-Debido a que es diferente la información (datos y metadatos de los indicadores) que proviene de los servidores del Banco de México e INEGI, como el nombre del indicador o la frecuencia de las observaciones, se estableció que era fundamental estandarizar los data frames que resulten de utilizar api_bie o api_sie para que el ususario pueda juntar todas las series utilizando la paquetería Tidyverse. 
+- Debido a que es diferente la información (datos y metadatos de los indicadores) que proviene de los servidores del Banco de México e INEGI, como el nombre del indicador o la frecuencia de las observaciones, se estableció que era fundamental estandarizar los data frames que resulten de utilizar api_bie o api_sie para que el ususario pueda juntar todas las series utilizando la paquetería Tidyverse. 
 
-##Generar una tabla y visualización de los indicadores provenientes del BIE y SIE
+##Generar una tabla y visualización de los indicadores provenientes del BIE y SIE.
 
 Para utilizar left_join() de Tidyverse, es necesario que las variables "fecha" tengan el mismo formato y, preferentemente, la misma clase (Date).
 
@@ -82,18 +83,20 @@ En el siguiente caso se tienen dos formatos:
 
 La solución más sencilla es homologar ambas fechas al primer día de cada mes, pero antes de juntarlas es importante verificar que ambas series abarquen la misma cantidad de años, trimestres, meses, etc.
 
-También es posible generar visualizaciones de las series a través de la función ts().
+- También es posible generar visualizaciones de las series a través de la función ts().
 
-La función ts necesita una matriz con información numérica, por lo que se debe eliminar la columna de "fecha".
+- La función ts necesita una matriz con información numérica, por lo que se debe eliminar la columna de "fecha".
 
 ```{r ejemplo-integracion-series}
 library(tidyverse)
 library(seriesMX)
 
+#Tipo de cambio mensual, fecha de determinación (FIX).
 tipo_de_cambio_fix<-api_sie(url = paste0("https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908/datos?token="),
 token = "5864e518164893a673fa467ac9e759836dbee33aecc73525d1e1f03254e44a50",
 formato_resp = "&mediaType=json")
 
+#Variación porcentual anual de la serie desestacionalizada de la Formación Bruta de Capital Fijo (TOTAL)
 formacion_bcf<-api_bie(url = paste0("https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/741104/es/00/false/BIE-BISE/2.0/"),
 token = "c1a58e29e-8796-409c-9aeb-3206889b2005",
 formato_resp = "?type=json")
@@ -109,22 +112,39 @@ formacion_bcf<- formacion_bcf%>%
 fix_fbcf<- tipo_de_cambio_fix%>%
   left_join(formacion_bcf, by = "fecha")%>%
   rename(fix=observacion.x, fbcf=observacion.y)%>%
-  select(fecha, fix, fbcf)
+  select(fecha, fix, fbcf)%>%
+  filter(fecha >= as.Date("2018-01-01"))
 
-fix_fbcf
+head(fix_fbcf)
 
-#Para crear el crecimiento anual de FIX: 
+#Para calcular la variación porcentual anual del tipo de cambio FIX, agregarla al data frame y graficarlo junto con la serie FBCF:
 
 ts.plot((serie_ts<- ts(data = (fix_fbcf%>%
                                  mutate(var_anual_FIX = (fix - lag(fix, n = 1)) /lag(fix, n = 1)*100)%>%
                                  filter(fecha >= as.Date("2019-01-01"))%>%
                                  select(var_anual_FIX, fbcf)), frequency = 12, 
                        start = c(2019, 1))),
-        main = "Gráfica 1. variación anual de la serie desestacionalizada de la Formación Bruta de Capital Fijo Total y del tipo de cambio mensual (FIX)",
+        main = "Gráfica 1.Var% anual del tipo de cambio (FIX) y la FBCF, a.e.",
   xlab = "Mes",
   ylab = "Puntos porcentuales", 
-  col = c("red", "black"),
+  col = c("#FF1493", "black"),
   lty = c(1, 2))
+
+grid(col = "grey", lty = "dotted")
+
+legend("topleft",legend=c("Tipo de cambio (FIX)","FBCF, a.e."),
+                          col=c("#FF1493", "black"),
+       lty = c(1, 2),
+       seg.len = 1.5,
+       cex = 0.85,
+       xpd = TRUE,
+       inset = c(0.02, 0.02),
+       bty = "n",
+       y.intersp = 0.8)
+
+mtext("Fuente: elaboración propia con datos del BIE y el SIE.", 
+      side=1, line=4.1, adj=0, cex=0.85)
+mtext("Base 2018 = 100 para la FBCF", side=3, line=0.3, cex=0.89, font=3, col="black")
 
 ```
 
