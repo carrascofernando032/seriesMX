@@ -7,16 +7,19 @@
 
 <!-- badges: end -->
 
+Las API’s web institucionales son el medio por el cual se presentan
+diversos indicadores de la economía mexicana al público general para que
+investigadores y desarrolladores consulten los datos de una manera
+eficiente y segura.
+
 seriesMX es un paquete de R que automatiza la descarga, procesamiento,
 presentación y actualización de diversos indicadores de la economía
-mexicana a través del uso de las API’s WEB del Sistema de Información
-Económica (SIE) de Banco de México y del Banco de Información Económica
-(BIE) del Instituto Nacional de Estadística y Geografía (INEGI).
+mexicana a través del uso de las API’s web del Sistema de Información
+Económica (SIE) de Banco de México (Banxico), y del Banco de Información
+Económica (BIE) del Instituto Nacional de Estadística y Geografía
+(INEGI).
 
-En el contexto de dichas API’s institucionales, estas son el medio por
-el cual se presentan diversos indicadores al público general para que
-investigadores y desarrolladores consulten los datos sin acceso directo
-a sus bases de datos internas.
+¿Por qué se clasifican como API’s Web?
 
 Una API web (Application Programming Interface o Interfaz de
 Programación de Aplicaciones) es un conjunto de reglas y protocolos que
@@ -24,29 +27,46 @@ permite que diferentes aplicaciones o sistemas se comuniquen e
 intercambien datos a través de internet, utilizando principalmente el
 protocolo HTTP/HTTPS.
 
-Para más información consulte: <https://www.ibm.com/think/topics/api>
+Para más información consultar: <https://www.ibm.com/think/topics/api>
 
-¿Por qué se clasifican como API’s Web?
+En ese sentido, para acceder a los datos a través de las API’s web no es
+necesario instalar algún software. En su lugar, se realiza una petición
+web (una solicitud HTTP) por medio de una dirección URL específica
+provista por los sistemas informáticos de INEGI y Banxico. Al momento de
+llevar a cabo la consulta, sus servidores procesan la petición y
+devuelven la información en formatos estructurados estándar de
+intercambio de datos web, principalmente JSON o JSON-Stat.
 
-Para consultar datos no es necesario instalar algún software. En su
-lugar, se realiza una petición web (una solicitud HTTP) a una dirección
-URL específica provista por el INEGI o Banxico. Al momento de llevar a
-cabo la consulta, sus servidores procesan la petición y devuelven la
-información en formatos estructurados estándar de intercambio de datos
-web, principalmente JSON o JSON-Stat.
+Sin embargo, es importante señalar que ambos sistemas requieren que se
+lleve a cabo un registro en sus “portales de desarrolladores” para
+obtener un “Token” o clave de acceso digital, la cual viaja junto con la
+petición web para registar y validar el acceso del usuario.
 
-Sin embargo, es importante señalar que ambas plataformas requieren que
-se lleve a cabo un registro en sus portales de desarrolladores para
-obtener un “token” o clave de acceso digital, la cual viaja junto con la
-petición web para registar y validar la identidad del usuario.
+## Enlace del portal de desarrolladores de la API del Banco de Indicadores (BIE) o del Sistema de Información Económica (SIE).
+
+A través de estos portales, los desarrolladores o analistas que
+requieren la automatización del proceso de extracción de información
+económica publicada por INEGI y Banxico, pueden acceder a los datos
+correspondientes.
+
+- INEGI (BIE/BISE):
+  <https://www.inegi.org.mx/servicios/api_indicadores.html>
+
+- Banxico (SIE): <https://www.banxico.org.mx/SieAPIRest/service/v1/>
+
+Para consultar la dirección URL de la información asociada a los
+indicadores, los usuarios deben seleccionar el “Constructor de
+Consultas” en el caso del API de INEGI o el “Catálogo de series” en el
+caso de Banxico.
 
 Cualquier lenguaje de programación que tenga la capacidad de conectarse
-a internet (como Python, JavaScript, R, PHP o incluso macros avanzadas
-de Excel) puede consumir estas herramientas enviando peticiones HTTPS de
-forma remota.
+a internet (como Python, R o incluso macros avanzadas de Excel) puede
+consumir estas herramientas enviando peticiones HTTPS de forma remota.
 
-Antes de usar seriesMX, es indispensable que consulte las páginas web
-oficiales donde es posible generar los token correspondientes:
+## Acceso al Token de autenticación para realizar las peticiones de información al API del BIE o SIE.
+
+Antes de usar seriesMX, es indispensable consultar los siguientes
+enlaces para generar los token correspondientes:
 
 - INEGI (BIE/BISE):
   <https://www.inegi.org.mx/app/desarrolladores/generatoken/Usuarios/token_Verify>
@@ -54,9 +74,9 @@ oficiales donde es posible generar los token correspondientes:
 - Banco de México (SIE):
   <https://www.banxico.org.mx/SieAPIRest/service/v1/token>
 
-Nota: en la práctica es posible generar diversos token, su propósito
-sólo es controlar el flujo de acceso desde los servidores de INEGI y
-Banxico.
+Nota: en la práctica es posible generar más de un token, su propósito
+sólo es controlar el flujo de acceso a las API’s desde los servidores de
+INEGI y Banxico.
 
 ## Instalación del paquete.
 
@@ -70,15 +90,16 @@ pak::pak("carrascofernando032/seriesMX")
 
 ## Ejemplo sobre el uso de las funciones “api_bie” o “api_sie” del paquete seriesMX.
 
-Este es un ejemplo básico que muestra cómo utilizar el token dentro de
-la URL correspondiente. Se requieren tres argumentos: url del indicador
-que se desea consultar a través de la API, token y formato de respuesta
-de la información (json por defecto).
+¿Cómo utilizar el token dentro de la URL correspondiente? Se requieren
+tres argumentos: - URL del indicador que se desea consultar a través de
+la API - Token de autenticación - Formato de respuesta de la
+información: JSON (por defecto del paquete seriesMX), JSONP, XML,
+PC-Axis y JSON-Stat.
 
 ``` r
 library(seriesMX)
 api_bie(url = paste0("https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/736183/es/00/false/BIE-BISE/2.0/"),
-token = "ejemplo_f1a58e29e-8796-409c-9aeb-3206889b2067",
+token = "ejemplo_tokenf1a58e29e-8796-409c-9aeb-3206889b2067",
 formato_resp = "?type=json")
 ```
 
