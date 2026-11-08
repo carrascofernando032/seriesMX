@@ -68,12 +68,50 @@ Puede instalar la última versión del paquete "seriesMX" desde [GitHub](https:/
 pak::pak("carrascofernando032/seriesMX")
 ```
 
-## Ejemplo sobre el uso de las funciones "api_bie" o "api_sie" del paquete seriesMX.
+## Módulo de consumo e integración de las API's de INEGI y Banxico.
 
-¿Cómo utilizar el token dentro de la URL correspondiente? Se requieren tres argumentos: 
-- URL del indicador que se desea consultar a través de la API
-- Token de autenticación 
-- Formato de respuesta de la información: JSON (por defecto del paquete seriesMX), JSONP, XML, PC-Axis y JSON-Stat.
+En seriesMX, las funciones denominadas "api_bie" y "api_sie" son los componentes del paquete que conectan y extraen información de las API's de INEGI y Banxico.
+
+# ¿Qué hacen exactamente las funciones api_bie y api_sie?
+
+Consumen las API's de INEGI o Banxico (por ejemplo, consultando el tipo de cambio) para obtener información, toman los datos que reciben y los adaptan para que puedan ser usados, guardados o procesados por R, y estandarizan el formato de los datos (JSON o XML) controlando los errores, tiempos de espera y la seguridad (Tokens).
+
+- API del Banco de Información Económica (BIE / INEGI): la función "api_bie" automatiza las solicitudes de información a la API de INEGI utilizando el token de desarrollador.
+- API del Sistema de Información Económica (SIE / Banxico): la función "api_sie" es equivalente a "api_bie" para consultar información de Banco de México.
+
+# ¿Cómo consultar información a través de la API de INEGI o Banxico? 
+
+Ejemplo api_bie - INEGI.
+Var% anual de la serie desestacionalizada del Producto Interno Bruto (base 2018).
+
+Argumentos:
+- URL del indicador que se desea consultar a través de la API:
+"https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/736183/es/00/false/BIE-BISE/2.0/"
+- Token de autenticación:
+"f1a58e29e-8796-409c-9aeb-3206889b2067"
+- Formato de respuesta de la información: 
+"?type=json"
+
+Ejemplo api_sie - Banxico. 
+Tipo de cambio mensual, fecha de determinación (FIX).
+
+Argumentos:
+- URL del indicador que se desea consultar a través de la API:
+"https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908/datos?token="
+- Token de autenticación:
+"5864e518164893a673fa467ac9e759836dbee33aecc73525d1e1f03254e43b70"
+- Formato de respuesta de la información: 
+"&mediaType=json"
+
+## Características del resultado de api_bie y api_sie.
+
+# Data frame.
+Un data frame en R es una estructura de datos bidimensional (en forma de tabla con filas y columnas) que permite almacenar datos heterogéneos.Es el objeto más utilizado para el análisis estadístico y la manipulación de información en R, ya que funciona de forma similar a una hoja de cálculo de Excel.
+
+Con un data frame se pueden implementar las herramientas intermedias del lenguaje de programación R con énfasis en la limpieza, manipulación de datos y visualizaciones avanzadas.
+
+Debido a la heterogenidad en la información que proviene de los servidores del Banco de México e INEGI (datos, metadatos, el nombre del indicador o la frecuencia de las observaciones) api_bie y api_sie estandarizan los data frames que resulten de utilizar estas funciones.
+
 
 ```{r ejemplo-api-bie, eval=FALSE}
 library(seriesMX)
@@ -82,41 +120,46 @@ token = "ejemplo_tokenf1a58e29e-8796-409c-9aeb-3206889b2067",
 formato_resp = "?type=json")
 ```
 
-## Especificaciones sobre las funciones api_bie y api_sie.
+## Módulo para la unión y visualización de los datos a través de una variable en común: periodo de tiempo.
 
-- Un data frame en R es una estructura de datos bidimensional (en forma de tabla con filas y columnas) que permite almacenar datos heterogéneos.Es el objeto más utilizado para el análisis estadístico y la manipulación de información en R, ya que funciona de forma muy similar a una hoja de cálculo de Excel.
+Este módulo está diseñado para tomar los datos extraídos de las API de BIE (INEGI) y SIE (Banco de México) y generar visualizaciones de las series. En la ciencia de datos es común tener que unir bases entre sí, pues un álisis no implica trabajar con una sola base o dataframe, al contrario, se suele trabajar con múltiples bases y generalmente (casi siempre) se requiere combinarlas para dar respuesta a las preguntas que motivan el análisis.
 
-- El propósito del "producto final" de las funciones api_bie o api_sie es proporcionar un data frame con el que se puedan implementar las herramientas intermedias del lenguaje de programación R con énfasis en la limpieza, manipulación de datos y visualizaciones avanzadas.
-
-- Debido a que es diferente la información (datos y metadatos de los indicadores) que proviene de los servidores del Banco de México e INEGI, como el nombre del indicador o la frecuencia de las observaciones, se estableció que era fundamental estandarizar los data frames que resulten de utilizar api_bie o api_sie para que el ususario pueda juntar todas las series utilizando la paquetería Tidyverse. 
-
-## Generar una tabla y visualización de los indicadores provenientes del BIE y SIE.
-
-Para utilizar left_join() de Tidyverse, es necesario que las variables "fecha" tengan el mismo formato y, preferentemente, la misma clase (Date).
+La idea fundamental es: agregar nuevas variables a un marco de datos a
+partir de observaciones coincidentes en otro.
 
 En el siguiente caso se tienen dos formatos:
 - Data frame 1: "1992-08-01" (fecha diaria).
 - Data frame 2: "1992/08" (fecha mensual).
 
-La solución más sencilla es homologar ambas fechas al primer día de cada mes, pero antes de juntarlas es importante verificar que ambas series abarquen la misma cantidad de años, trimestres, meses, etc.
+Se deben homologar las fechas al primer día de cada mes. Sin embargo, antes de unir los data frames es importante verificar que ambas series abarquen el mismo periodo de tiempo.
 
-- También es posible generar visualizaciones de las series a través de la función ts().
+# Familia Join de la colección Tidyverse en R.
 
-- La función ts necesita una matriz con información numérica, por lo que se debe eliminar la columna de "fecha".
+Tidyverse es una colección de paquetes de código abierto para R, diseñados específicamente para la ciencia de datos.
+
+Tidyverse, a través del paquete denominado dplyr, tiene una familia de funciones llamada “join”. Sus integrantes son: left, rigth, inner, full, semi y anti, todos de apellido “_join”. Cada uno de los integrantes de la familia tiene su peculiaridad, pero todos coinciden en que la unión de datos debe ser a través de una(s) variable(s) en común.
+
+Para utilizar la función "left_join()" de Tidyverse, es necesario que las variables "fecha" tengan el mismo formato y, preferentemente, la misma clase (Date).
+
 
 ```{r ejemplo-integracion-series}
+#Paquetería necesaria.
 library(tidyverse)
 library(seriesMX)
 
 #Tipo de cambio mensual, fecha de determinación (FIX).
+
 tipo_de_cambio_fix<-api_sie(url = paste0("https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908/datos?token="),
 token = "5864e518164893a673fa467ac9e759836dbee33aecc73525d1e1f03254e44a50",
 formato_resp = "&mediaType=json")
 
-#Variación porcentual anual de la serie desestacionalizada de la Formación Bruta de Capital Fijo (TOTAL)
+#Variación porcentual anual de la serie desestacionalizada de la Formación Bruta de Capital Fijo (TOTAL).
+
 formacion_bcf<-api_bie(url = paste0("https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/741104/es/00/false/BIE-BISE/2.0/"),
 token = "c1a58e29e-8796-409c-9aeb-3206889b2005",
 formato_resp = "?type=json")
+
+#Homologación de las fechas.
 
 tipo_de_cambio_fix <- tipo_de_cambio_fix%>%
   mutate(fecha = as.Date(fecha))%>%
@@ -126,18 +169,21 @@ formacion_bcf<- formacion_bcf%>%
   mutate(fecha = as.Date(paste0(
     gsub("/", "-", fecha), "-01")))
 
+#Unión de los datos a través de una variable en común por medio de la función left_join()
+
 fix_fbcf<- tipo_de_cambio_fix%>%
   left_join(formacion_bcf, by = "fecha")%>%
   rename(fix=observacion.x, fbcf=observacion.y)%>%
   select(fecha, fix, fbcf)%>%
   filter(fecha >= as.Date("2018-01-01"))
 
+#Para ver las primeras 6 observaciones del data frame.
 head(fix_fbcf)
 
-#Para calcular la variación porcentual anual del tipo de cambio FIX, agregarla al data frame y graficarlo junto con la serie FBCF:
+#Para calcular la variación porcentual anual del tipo de cambio FIX, agregarla al data frame y visualizarlo junto con la serie FBCF en una gráfica de series de tiempo:
 
 ts.plot((serie_ts<- ts(data = (fix_fbcf%>%
-                                 mutate(var_anual_FIX = (fix - lag(fix, n = 1)) /lag(fix, n = 1)*100)%>%
+                                 mutate(var_anual_FIX = (((fix /lag(fix, n = 12))-1)*100))%>%
                                  filter(fecha >= as.Date("2019-01-01"))%>%
                                  select(var_anual_FIX, fbcf)), frequency = 12, 
                        start = c(2019, 1))),
