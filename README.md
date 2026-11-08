@@ -42,7 +42,7 @@ lleve a cabo un registro en sus “portales de desarrolladores” para
 obtener un “Token” o clave de acceso digital, la cual viaja junto con la
 petición web para registar y validar el acceso del usuario.
 
-## Enlace del portal de desarrolladores de la API del Banco de Indicadores (BIE) o del Sistema de Información Económica (SIE).
+# Enlace del portal de desarrolladores de la API del Banco de Indicadores (BIE) o del Sistema de Información Económica (SIE).
 
 A través de estos portales, los desarrolladores o analistas que
 requieren la automatización del proceso de extracción de información
@@ -63,7 +63,7 @@ Cualquier lenguaje de programación que tenga la capacidad de conectarse
 a internet (como Python, R o incluso macros avanzadas de Excel) puede
 consumir estas herramientas enviando peticiones HTTPS de forma remota.
 
-## Acceso al Token de autenticación para realizar las peticiones de información al API del BIE o SIE.
+# Acceso al Token de autenticación para realizar las peticiones de información al API del BIE o SIE.
 
 Antes de usar seriesMX, es indispensable consultar los siguientes
 enlaces para generar los token correspondientes:
@@ -78,7 +78,7 @@ Nota: en la práctica es posible generar más de un token, su propósito
 sólo es controlar el flujo de acceso a las API’s desde los servidores de
 INEGI y Banxico.
 
-## Instalación del paquete.
+# Instalación del paquete.
 
 Puede instalar la última versión del paquete “seriesMX” desde
 [GitHub](https://github.com/):
@@ -88,13 +88,13 @@ Puede instalar la última versión del paquete “seriesMX” desde
 pak::pak("carrascofernando032/seriesMX")
 ```
 
-## Módulo de consumo e integración de las API’s de INEGI y Banxico.
+# Módulo de consumo e integración de las API’s de INEGI y Banxico.
 
 En seriesMX, las funciones denominadas “api_bie” y “api_sie” son los
 componentes del paquete que conectan y extraen información de las API’s
 de INEGI y Banxico.
 
-# ¿Qué hacen exactamente las funciones api_bie y api_sie?
+## ¿Qué hacen exactamente las funciones api_bie y api_sie?
 
 Consumen las API’s de INEGI o Banxico (por ejemplo, consultando el tipo
 de cambio) para obtener información, toman los datos que reciben y los
@@ -130,9 +130,9 @@ Token de autenticación:
 “5864e518164893a673fa467ac9e759836dbee33aecc73525d1e1f03254e43b70” -
 Formato de respuesta de la información: “&mediaType=json”
 
-## Características del resultado de api_bie y api_sie.
+# Características del resultado de api_bie y api_sie
 
-# Data frame.
+## Data frame
 
 Un data frame en R es una estructura de datos bidimensional (en forma de
 tabla con filas y columnas) que permite almacenar datos heterogéneos.Es
@@ -156,7 +156,7 @@ token = "ejemplo_tokenf1a58e29e-8796-409c-9aeb-3206889b2067",
 formato_resp = "?type=json")
 ```
 
-## Módulo para la unión y visualización de los datos a través de una variable en común: periodo de tiempo.
+# Módulo para la unión y visualización de los datos a través de una variable en común: periodo de tiempo
 
 Este módulo está diseñado para tomar los datos extraídos de las API de
 BIE (INEGI) y SIE (Banco de México) y generar visualizaciones de las
@@ -176,7 +176,7 @@ Se deben homologar las fechas al primer día de cada mes. Sin embargo,
 antes de unir los data frames es importante verificar que ambas series
 abarquen el mismo periodo de tiempo.
 
-# Familia Join de la colección Tidyverse en R.
+## Familia Join de la colección Tidyverse en R
 
 Tidyverse es una colección de paquetes de código abierto para R,
 diseñados específicamente para la ciencia de datos.
@@ -191,99 +191,32 @@ Para utilizar la función “left_join()” de Tidyverse, es necesario que
 las variables “fecha” tengan el mismo formato y, preferentemente, la
 misma clase (Date).
 
-``` r
-#Paquetería necesaria.
-library(tidyverse)
-#> Warning: package 'tidyverse' was built under R version 4.6.1
-#> Warning: package 'ggplot2' was built under R version 4.6.1
-#> Warning: package 'tibble' was built under R version 4.6.1
-#> Warning: package 'tidyr' was built under R version 4.6.1
-#> Warning: package 'readr' was built under R version 4.6.1
-#> Warning: package 'purrr' was built under R version 4.6.1
-#> Warning: package 'dplyr' was built under R version 4.6.1
-#> Warning: package 'stringr' was built under R version 4.6.1
-#> Warning: package 'forcats' was built under R version 4.6.1
-#> Warning: package 'lubridate' was built under R version 4.6.1
-#> ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-#> ✔ dplyr     1.2.1     ✔ readr     2.2.0
-#> ✔ forcats   1.0.1     ✔ stringr   1.6.0
-#> ✔ ggplot2   4.0.3     ✔ tibble    3.3.1
-#> ✔ lubridate 1.9.5     ✔ tidyr     1.3.2
-#> ✔ purrr     1.2.2     
-#> ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-#> ✖ dplyr::filter() masks stats::filter()
-#> ✖ dplyr::lag()    masks stats::lag()
-#> ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
-library(seriesMX)
-
-#Tipo de cambio mensual, fecha de determinación (FIX).
-
-tipo_de_cambio_fix<-api_sie(url = paste0("https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908/datos?token="),
-token = "5864e518164893a673fa467ac9e759836dbee33aecc73525d1e1f03254e44a50",
-formato_resp = "&mediaType=json")
-
-#Variación porcentual anual de la serie desestacionalizada de la Formación Bruta de Capital Fijo (TOTAL).
-
-formacion_bcf<-api_bie(url = paste0("https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/741104/es/00/false/BIE-BISE/2.0/"),
-token = "c1a58e29e-8796-409c-9aeb-3206889b2005",
-formato_resp = "?type=json")
-
-#Homologación de las fechas.
-
-tipo_de_cambio_fix <- tipo_de_cambio_fix%>%
-  mutate(fecha = as.Date(fecha))%>%
-  filter(fecha >= "1994-01-01")
-
-formacion_bcf<- formacion_bcf%>%
-  mutate(fecha = as.Date(paste0(
-    gsub("/", "-", fecha), "-01")))
-
-#Unión de los datos a través de una variable en común por medio de la función left_join()
-
-fix_fbcf<- tipo_de_cambio_fix%>%
-  left_join(formacion_bcf, by = "fecha")%>%
-  rename(fix=observacion.x, fbcf=observacion.y)%>%
-  select(fecha, fix, fbcf)%>%
-  filter(fecha >= as.Date("2018-01-01"))
-
-#Para ver las primeras 6 observaciones del data frame.
-head(fix_fbcf)
-#>        fecha     fix       fbcf
-#> 1 2018-01-01 18.9074 -0.4555279
-#> 2 2018-02-01 18.6449  2.1005742
-#> 3 2018-03-01 18.6308  1.6259466
-#> 4 2018-04-01 18.3872  2.9199767
-#> 5 2018-05-01 19.5910  2.6252223
-#> 6 2018-06-01 20.3032  1.4187628
-
-#Para calcular la variación porcentual anual del tipo de cambio FIX, agregarla al data frame y visualizarlo junto con la serie FBCF en una gráfica de series de tiempo:
-
-ts.plot((serie_ts<- ts(data = (fix_fbcf%>%
-                                 mutate(var_anual_FIX = (((fix /lag(fix, n = 12))-1)*100))%>%
-                                 filter(fecha >= as.Date("2019-01-01"))%>%
-                                 select(var_anual_FIX, fbcf)), frequency = 12, 
-                       start = c(2019, 1))),
-        main = "Gráfica 1.Var% anual del tipo de cambio (FIX) y la FBCF, a.e.",
-  xlab = "Mes",
-  ylab = "Puntos porcentuales", 
-  col = c("#FF1493", "black"),
-  lty = c(1, 2))
-
-grid(col = "grey", lty = "dotted")
-
-legend("topright",legend=c("Tipo de cambio (FIX)","FBCF, a.e."),
-                          col=c("#FF1493", "black"),
-       lty = c(1, 2),
-       seg.len = 1,
-       cex = 0.8,
-       xpd = TRUE,
-       inset = c(0.02, 0.02),
-       bty = "n",
-       y.intersp = 0.7)
-
-mtext("Fuente: elaboración propia con datos del BIE y el SIE.", 
-      side=1, line=4.1, adj=0, cex=0.85)
-mtext("Base 2018 = 100 para la FBCF", side=3, line=0.3, cex=0.89, font=3, col="black")
-```
+    #> Warning: package 'tidyverse' was built under R version 4.6.1
+    #> Warning: package 'ggplot2' was built under R version 4.6.1
+    #> Warning: package 'tibble' was built under R version 4.6.1
+    #> Warning: package 'tidyr' was built under R version 4.6.1
+    #> Warning: package 'readr' was built under R version 4.6.1
+    #> Warning: package 'purrr' was built under R version 4.6.1
+    #> Warning: package 'dplyr' was built under R version 4.6.1
+    #> Warning: package 'stringr' was built under R version 4.6.1
+    #> Warning: package 'forcats' was built under R version 4.6.1
+    #> Warning: package 'lubridate' was built under R version 4.6.1
+    #> ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+    #> ✔ dplyr     1.2.1     ✔ readr     2.2.0
+    #> ✔ forcats   1.0.1     ✔ stringr   1.6.0
+    #> ✔ ggplot2   4.0.3     ✔ tibble    3.3.1
+    #> ✔ lubridate 1.9.5     ✔ tidyr     1.3.2
+    #> ✔ purrr     1.2.2     
+    #> ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+    #> ✖ dplyr::filter() masks stats::filter()
+    #> ✖ dplyr::lag()    masks stats::lag()
+    #> ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+    #>        fecha     fix       fbcf
+    #> 1 2018-01-01 18.9074 -0.4555279
+    #> 2 2018-02-01 18.6449  2.1005742
+    #> 3 2018-03-01 18.6308  1.6259466
+    #> 4 2018-04-01 18.3872  2.9199767
+    #> 5 2018-05-01 19.5910  2.6252223
+    #> 6 2018-06-01 20.3032  1.4187628
 
 <img src="man/figures/README-ejemplo-integracion-series-1.png" alt="" width="100%" />

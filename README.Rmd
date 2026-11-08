@@ -32,7 +32,7 @@ En ese sentido, para acceder a los datos a través de las API's web no es necesa
 
 Sin embargo, es importante señalar que ambos sistemas requieren que se lleve a cabo un registro en sus "portales de desarrolladores" para obtener un "Token" o clave de acceso digital, la cual viaja junto con la petición web para registar y validar el acceso del usuario.
 
-## Enlace del portal de desarrolladores de la API del Banco de Indicadores (BIE) o del Sistema de Información Económica (SIE).
+# Enlace del portal de desarrolladores de la API del Banco de Indicadores (BIE) o del Sistema de Información Económica (SIE).
 
 A través de estos portales, los desarrolladores o analistas que requieren la automatización del proceso de extracción de información económica publicada por INEGI y Banxico, pueden acceder a los datos correspondientes.
 
@@ -46,7 +46,7 @@ Para consultar la dirección URL de la información asociada a los indicadores, 
 
 Cualquier lenguaje de programación que tenga la capacidad de conectarse a internet (como Python, R o incluso macros avanzadas de Excel) puede consumir estas herramientas enviando peticiones HTTPS de forma remota.
 
-## Acceso al Token de autenticación para realizar las peticiones de información al API del BIE o SIE.
+# Acceso al Token de autenticación para realizar las peticiones de información al API del BIE o SIE.
 
 Antes de usar seriesMX, es indispensable consultar los siguientes enlaces para generar los token correspondientes: 
 
@@ -59,7 +59,7 @@ https://www.banxico.org.mx/SieAPIRest/service/v1/token
 Nota: en la práctica es posible generar más de un token, su propósito sólo es controlar el flujo de acceso a las API's desde los servidores de INEGI y Banxico.
 
 
-## Instalación del paquete.
+# Instalación del paquete.
 
 Puede instalar la última versión del paquete "seriesMX" desde [GitHub](https://github.com/):
 
@@ -68,11 +68,11 @@ Puede instalar la última versión del paquete "seriesMX" desde [GitHub](https:/
 pak::pak("carrascofernando032/seriesMX")
 ```
 
-## Módulo de consumo e integración de las API's de INEGI y Banxico.
+# Módulo de consumo e integración de las API's de INEGI y Banxico.
 
 En seriesMX, las funciones denominadas "api_bie" y "api_sie" son los componentes del paquete que conectan y extraen información de las API's de INEGI y Banxico.
 
-# ¿Qué hacen exactamente las funciones api_bie y api_sie?
+## ¿Qué hacen exactamente las funciones api_bie y api_sie?
 
 Consumen las API's de INEGI o Banxico (por ejemplo, consultando el tipo de cambio) para obtener información, toman los datos que reciben y los adaptan para que puedan ser usados, guardados o procesados por R, y estandarizan el formato de los datos (JSON o XML) controlando los errores, tiempos de espera y la seguridad (Tokens).
 
@@ -103,9 +103,9 @@ Argumentos:
 - Formato de respuesta de la información: 
 "&mediaType=json"
 
-## Características del resultado de api_bie y api_sie.
+# Características del resultado de api_bie y api_sie
 
-# Data frame.
+## Data frame
 Un data frame en R es una estructura de datos bidimensional (en forma de tabla con filas y columnas) que permite almacenar datos heterogéneos.Es el objeto más utilizado para el análisis estadístico y la manipulación de información en R, ya que funciona de forma similar a una hoja de cálculo de Excel.
 
 Con un data frame se pueden implementar las herramientas intermedias del lenguaje de programación R con énfasis en la limpieza, manipulación de datos y visualizaciones avanzadas.
@@ -120,7 +120,7 @@ token = "ejemplo_tokenf1a58e29e-8796-409c-9aeb-3206889b2067",
 formato_resp = "?type=json")
 ```
 
-## Módulo para la unión y visualización de los datos a través de una variable en común: periodo de tiempo.
+# Módulo para la unión y visualización de los datos a través de una variable en común: periodo de tiempo
 
 Este módulo está diseñado para tomar los datos extraídos de las API de BIE (INEGI) y SIE (Banco de México) y generar visualizaciones de las series. En la ciencia de datos es común tener que unir bases entre sí, pues un álisis no implica trabajar con una sola base o dataframe, al contrario, se suele trabajar con múltiples bases y generalmente (casi siempre) se requiere combinarlas para dar respuesta a las preguntas que motivan el análisis.
 
@@ -133,7 +133,7 @@ En el siguiente caso se tienen dos formatos:
 
 Se deben homologar las fechas al primer día de cada mes. Sin embargo, antes de unir los data frames es importante verificar que ambas series abarquen el mismo periodo de tiempo.
 
-# Familia Join de la colección Tidyverse en R.
+## Familia Join de la colección Tidyverse en R
 
 Tidyverse es una colección de paquetes de código abierto para R, diseñados específicamente para la ciencia de datos.
 
@@ -142,7 +142,7 @@ Tidyverse, a través del paquete denominado dplyr, tiene una familia de funcione
 Para utilizar la función "left_join()" de Tidyverse, es necesario que las variables "fecha" tengan el mismo formato y, preferentemente, la misma clase (Date).
 
 
-```{r ejemplo-integracion-series}
+```{r ejemplo-integracion-series, echo=FALSE}
 #Paquetería necesaria.
 library(tidyverse)
 library(seriesMX)
@@ -195,7 +195,7 @@ ts.plot((serie_ts<- ts(data = (fix_fbcf%>%
 
 grid(col = "grey", lty = "dotted")
 
-legend("topright",legend=c("Tipo de cambio (FIX)","FBCF, a.e."),
+legend("topright",legend=c("Tipo de cambio (FIX)","Formación Bruta de Capital Fijo, a.e."),
                           col=c("#FF1493", "black"),
        lty = c(1, 2),
        seg.len = 1,
