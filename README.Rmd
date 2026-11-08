@@ -142,7 +142,7 @@ Tidyverse, a través del paquete denominado dplyr, tiene una familia de funcione
 Para utilizar la función "left_join()" de Tidyverse, es necesario que las variables "fecha" tengan el mismo formato y, preferentemente, la misma clase (Date).
 
 
-```{r ejemplo-integracion-series, echo=FALSE}
+```{r ejemplo-integracion-series}
 #Paquetería necesaria.
 library(tidyverse)
 library(seriesMX)
