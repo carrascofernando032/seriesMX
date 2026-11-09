@@ -2,11 +2,18 @@
 
 export(api_bie)
 export(api_sie)
+export(graficar_ts)
 export(indice)
 export(resumen)
 export(resumen_porc)
 export(suma_porc)
 importFrom(dplyr,summarise)
+importFrom(graphics,
+  grid,
+  legend,
+  mtext,
+  par
+)
 importFrom(httr,
   GET,
   content
@@ -20,5 +27,7 @@ importFrom(stats,
   IQR,
   median,
   quantile,
-  sd
+  sd,
+  ts,
+  ts.plot
 )

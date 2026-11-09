@@ -114,21 +114,26 @@ errores, tiempos de espera y la seguridad (Tokens).
 Ejemplo api_bie - INEGI. Var% anual de la serie desestacionalizada del
 Producto Interno Bruto (base 2018).
 
-Argumentos: - URL del indicador que se desea consultar a través de la
-API:
-“<https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/736183/es/00/false/BIE-BISE/2.0/>” -
-Token de autenticación: “f1a58e29e-8796-409c-9aeb-3206889b2067” -
-Formato de respuesta de la información: “?type=json”
+Argumentos:
+
+- URL del indicador que se desea consultar a través de la API:
+  “<https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/736183/es/00/false/BIE-BISE/2.0/>”
+
+- Token de autenticación: “f1a58e29e-8796-409c-9aeb-3206889b2067”
+
+- Formato de respuesta de la información: “?type=json”
 
 Ejemplo api_sie - Banxico. Tipo de cambio mensual, fecha de
 determinación (FIX).
 
 Argumentos: - URL del indicador que se desea consultar a través de la
 API:
-“<https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908/datos?token=>” -
-Token de autenticación:
-“5864e518164893a673fa467ac9e759836dbee33aecc73525d1e1f03254e43b70” -
-Formato de respuesta de la información: “&mediaType=json”
+“<https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908/datos?token=>”
+
+- Token de autenticación:
+  “5864e518164893a673fa467ac9e759836dbee33aecc73525d1e1f03254e43b70”
+
+- Formato de respuesta de la información: “&mediaType=json”
 
 # Características del resultado de api_bie y api_sie
 
@@ -190,6 +195,8 @@ de datos debe ser a través de una(s) variable(s) en común.
 Para utilizar la función “left_join()” de Tidyverse, es necesario que
 las variables “fecha” tengan el mismo formato y, preferentemente, la
 misma clase (Date).
+
+## Gráfica de series de tiempo a partir de datos del BIE (INEGI) y del SIE (Banxico).
 
 ``` r
 #Paquetería necesaria.
@@ -287,3 +294,59 @@ mtext("Base 2018 = 100 para la FBCF", side=3, line=0.3, cex=0.89, font=3, col="b
 ```
 
 <img src="man/figures/README-ejemplo-integracion-series-1.png" alt="" width="100%" />
+\# Función “graficar_ts”
+
+Automatiza la construcción de una gráfica de series de tiempo a partir
+de un data frame con una columna de fechas y una o más columnas
+numéricas (indicadores), como el resultado de unir con `left_join()` los
+data frames individuales devueltos por api_bie() y api_sie().
+
+``` r
+# Con datos reales de las API's (requiere Tokens de autenticación):
+
+library(tidyverse)
+library(seriesMX)
+
+#Tipo de cambio mensual, fecha de determinación (FIX).
+
+tipo_de_cambio_fix<-api_sie(url = paste0("https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908/datos?token="),
+token = "5864e518164893a673fa467ac9e759836dbee33aecc73525d1e1f03254e44a50",
+formato_resp = "&mediaType=json")
+
+#Variación porcentual anual de la serie desestacionalizada de la Formación Bruta de Capital Fijo (TOTAL).
+
+formacion_bcf<-api_bie(url = paste0("https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/741104/es/00/false/BIE-BISE/2.0/"),
+token = "c1a58e29e-8796-409c-9aeb-3206889b2005",
+formato_resp = "?type=json")
+
+#Homologación de las fechas:
+
+tipo_de_cambio_fix <- tipo_de_cambio_fix%>%
+  mutate(fecha = as.Date(fecha))%>%
+  filter(fecha >= "1994-01-01")
+
+formacion_bcf<- formacion_bcf%>%
+  mutate(fecha = as.Date(paste0(
+    gsub("/", "-", fecha), "-01")))
+
+# Unión por fecha y variación anual del FIX:
+
+fix_fbcf<- tipo_de_cambio_fix%>%
+  left_join(formacion_bcf, by = "fecha")%>%
+  rename(fix=observacion.x, fbcf=observacion.y)%>%
+  mutate(var_anual_fix = (fix / lag(fix, n = 12) - 1) * 100)%>%
+  select(fecha, fbcf, var_anual_fix)
+
+
+#Usar la función "graficar_ts" de seriesMX: 
+
+graficar_ts(df = fix_fbcf,
+  inicio = "2019-01-01",
+  titulo = "Gráfica 1. Var% anual del tipo de cambio (FIX) y la FBCF, a.e.",
+  ejey = "Puntos porcentuales",
+  etiquetas = c("Formación Bruta de Capital Fijo, a.e.", "Tipo de cambio (FIX)"),
+  fuente = "Fuente: elaboración propia con datos del BIE (INEGI) y el SIE (Banxico).",
+  subtitulo = "Base 2018 = 100 para la FBCF, a.e.")
+```
+
+<img src="man/figures/README-ejemplo-graficar-series-1.png" alt="" width="100%" />

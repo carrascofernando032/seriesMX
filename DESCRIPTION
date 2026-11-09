@@ -8,6 +8,6 @@ License: MIT + file LICENSE
 Config/roxygen2/version: 8.1.0
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-Imports: dplyr, moments, stats, httr, jsonlite
+Imports: dplyr, moments, stats, httr, jsonlite, graphics
 URL: https://github.com/carrascofernando032/seriesMX
 BugReports: https://github.com/carrascofernando032/seriesMX/issues
