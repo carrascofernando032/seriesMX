@@ -191,7 +191,7 @@ graficar_ts <- function(df,
   if (!is.null(leyenda)) {
     graphics::legend(leyenda, legend = etiquetas, col = col, lty = lty, lwd = lwd,
                      seg.len = 1, cex = 0.8, xpd = TRUE, inset = c(0.02, 0.02),
-                     bty = "n", y.intersp = 0.7)
+                     bty = "n", y.intersp = 1)
   }
   if (!is.null(fuente)) {
     graphics::mtext(fuente, side = 1, line = 4.1, adj = 0, cex = 0.85)
