@@ -196,7 +196,13 @@ Para utilizar la función “left_join()” de Tidyverse, es necesario que
 las variables “fecha” tengan el mismo formato y, preferentemente, la
 misma clase (Date).
 
-## Gráfica de series de tiempo a partir de datos del BIE (INEGI) y del SIE (Banxico).
+## Gráfica de series de tiempo a partir de datos del BIE (INEGI) y del SIE (Banxico) con la función “graficar_ts” de seriesMX
+
+La función “graficar_ts” de seriesMX automatiza la construcción de una
+gráfica de series de tiempo a partir de un data frame con una columna de
+fechas y una o más columnas numéricas (indicadores), como el resultado
+de unir con `left_join()` los data frames individuales devueltos por
+api_bie() y api_sie().
 
 ``` r
 #Paquetería necesaria.
@@ -221,90 +227,6 @@ library(tidyverse)
 #> ✖ dplyr::filter() masks stats::filter()
 #> ✖ dplyr::lag()    masks stats::lag()
 #> ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
-library(seriesMX)
-
-#Tipo de cambio mensual, fecha de determinación (FIX).
-
-tipo_de_cambio_fix<-api_sie(url = paste0("https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908/datos?token="),
-token = "5864e518164893a673fa467ac9e759836dbee33aecc73525d1e1f03254e44a50",
-formato_resp = "&mediaType=json")
-
-#Variación porcentual anual de la serie desestacionalizada de la Formación Bruta de Capital Fijo (TOTAL).
-
-formacion_bcf<-api_bie(url = paste0("https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/741104/es/00/false/BIE-BISE/2.0/"),
-token = "c1a58e29e-8796-409c-9aeb-3206889b2005",
-formato_resp = "?type=json")
-
-#Homologación de las fechas.
-
-tipo_de_cambio_fix <- tipo_de_cambio_fix%>%
-  mutate(fecha = as.Date(fecha))%>%
-  filter(fecha >= "1994-01-01")
-
-formacion_bcf<- formacion_bcf%>%
-  mutate(fecha = as.Date(paste0(
-    gsub("/", "-", fecha), "-01")))
-
-#Unión de los datos a través de una variable en común por medio de la función left_join()
-
-fix_fbcf<- tipo_de_cambio_fix%>%
-  left_join(formacion_bcf, by = "fecha")%>%
-  rename(fix=observacion.x, fbcf=observacion.y)%>%
-  select(fecha, fix, fbcf)%>%
-  filter(fecha >= as.Date("2018-01-01"))
-
-#Para ver las primeras 6 observaciones del data frame.
-head(fix_fbcf)
-#>        fecha     fix       fbcf
-#> 1 2018-01-01 18.9074 -0.4555279
-#> 2 2018-02-01 18.6449  2.1005742
-#> 3 2018-03-01 18.6308  1.6259466
-#> 4 2018-04-01 18.3872  2.9199767
-#> 5 2018-05-01 19.5910  2.6252223
-#> 6 2018-06-01 20.3032  1.4187628
-
-#Para calcular la variación porcentual anual del tipo de cambio FIX, agregarla al data frame y visualizarlo junto con la serie FBCF en una gráfica de series de tiempo:
-
-ts.plot((serie_ts<- ts(data = (fix_fbcf%>%
-                                 mutate(var_anual_FIX = (((fix /lag(fix, n = 12))-1)*100))%>%
-                                 filter(fecha >= as.Date("2019-01-01"))%>%
-                                 select(var_anual_FIX, fbcf)), frequency = 12, 
-                       start = c(2019, 1))),
-        main = "Gráfica 1.Var% anual del tipo de cambio (FIX) y la FBCF, a.e.",
-  xlab = "Mes",
-  ylab = "Puntos porcentuales", 
-  col = c("#FF1493", "black"),
-  lty = c(1, 2))
-
-grid(col = "grey", lty = "dotted")
-
-legend("topright",legend=c("Tipo de cambio (FIX)","Formación Bruta de Capital Fijo, a.e."),
-                          col=c("#FF1493", "black"),
-       lty = c(1, 2),
-       seg.len = 1,
-       cex = 0.8,
-       xpd = TRUE,
-       inset = c(0.02, 0.02),
-       bty = "n",
-       y.intersp = 0.7)
-
-mtext("Fuente: elaboración propia con datos del BIE y el SIE.", 
-      side=1, line=4.1, adj=0, cex=0.85)
-mtext("Base 2018 = 100 para la FBCF", side=3, line=0.3, cex=0.89, font=3, col="black")
-```
-
-<img src="man/figures/README-ejemplo-integracion-series-1.png" alt="" width="100%" />
-\# Función “graficar_ts”
-
-Automatiza la construcción de una gráfica de series de tiempo a partir
-de un data frame con una columna de fechas y una o más columnas
-numéricas (indicadores), como el resultado de unir con `left_join()` los
-data frames individuales devueltos por api_bie() y api_sie().
-
-``` r
-# Con datos reales de las API's (requiere Tokens de autenticación):
-
-library(tidyverse)
 library(seriesMX)
 
 #Tipo de cambio mensual, fecha de determinación (FIX).
@@ -349,4 +271,4 @@ graficar_ts(df = fix_fbcf,
   subtitulo = "Base 2018 = 100 para la FBCF, a.e.")
 ```
 
-<img src="man/figures/README-ejemplo-graficar-series-1.png" alt="" width="100%" />
+<img src="man/figures/README-ejemplo-integracion-series-1.png" alt="" width="100%" />
