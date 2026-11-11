@@ -2,10 +2,10 @@
 
 export(api_bie)
 export(api_sie)
+export(estadisticos_ts)
 export(graficar_ts)
 export(indice)
 export(resumen)
-export(resumen_porc)
 export(suma_porc)
 importFrom(dplyr,summarise)
 importFrom(graphics,
