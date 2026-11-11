@@ -42,7 +42,7 @@ lleve a cabo un registro en sus “portales de desarrolladores” para
 obtener un “Token” o clave de acceso digital, la cual viaja junto con la
 petición web para registar y validar el acceso del usuario.
 
-# Enlace del portal de desarrolladores de la API del Banco de Indicadores (BIE) o del Sistema de Información Económica (SIE).
+# Enlace del portal de desarrolladores de la API del Banco de Indicadores (BIE) o del Sistema de Información Económica (SIE)
 
 A través de estos portales, los desarrolladores o analistas que
 requieren la automatización del proceso de extracción de información
@@ -63,7 +63,7 @@ Cualquier lenguaje de programación que tenga la capacidad de conectarse
 a internet (como Python, R o incluso macros avanzadas de Excel) puede
 consumir estas herramientas enviando peticiones HTTPS de forma remota.
 
-# Acceso al Token de autenticación para realizar las peticiones de información al API del BIE o SIE.
+# Acceso al Token de autenticación para realizar las peticiones de información al API del BIE o SIE
 
 Antes de usar seriesMX, es indispensable consultar los siguientes
 enlaces para generar los token correspondientes:
@@ -78,7 +78,7 @@ Nota: en la práctica es posible generar más de un token, su propósito
 sólo es controlar el flujo de acceso a las API’s desde los servidores de
 INEGI y Banxico.
 
-# Instalación del paquete.
+# Instalación del paquete
 
 Puede instalar la última versión del paquete “seriesMX” desde
 [GitHub](https://github.com/):
@@ -88,7 +88,7 @@ Puede instalar la última versión del paquete “seriesMX” desde
 pak::pak("carrascofernando032/seriesMX")
 ```
 
-# Módulo de consumo e integración de las API’s de INEGI y Banxico.
+# Módulo 1. Consumo e integración de las API’s de INEGI y Banxico
 
 En seriesMX, las funciones denominadas “api_bie” y “api_sie” son los
 componentes del paquete que conectan y extraen información de las API’s
@@ -135,7 +135,7 @@ API:
 
 - Formato de respuesta de la información: “&mediaType=json”
 
-# Características del resultado de api_bie y api_sie
+# Módulo 2. Resultado de api_bie y api_sie
 
 ## Data frame
 
@@ -161,7 +161,7 @@ token = "ejemplo_tokenf1a58e29e-8796-409c-9aeb-3206889b2067",
 formato_resp = "?type=json")
 ```
 
-# Módulo para la unión y visualización de los datos a través de una variable en común: periodo de tiempo
+# Módulo 3. Unión y visualización de los datos a través de una variable en común: periodo de tiempo
 
 Este módulo está diseñado para tomar los datos extraídos de las API de
 BIE (INEGI) y SIE (Banco de México) y generar visualizaciones de las
@@ -272,3 +272,43 @@ graficar_ts(df = fix_fbcf,
 ```
 
 <img src="man/figures/README-ejemplo-integracion-series-1.png" alt="" width="100%" />
+\# Módulo 4. Transformaciones macroeconómicas y aritmética porcentual
+
+Este módulo pretende proporcionar una metodología adecuada para el
+cálculo de tasas y variaciones porcentuales de las series de
+indicadores, evitando errores comunes de suma directa de porcentajes.
+
+## Función “estadisticos_ts” del paquete seriesMX
+
+Calcula estadísticos descriptivos de una o varias series de tasas de
+variación porcentual: número de observaciones, máximo, mínimo, media
+geométrica, media aritmética, mediana, desviación estándar, primer y
+tercer cuartil, rango intercuartílico, sesgo y curtosis.
+
+Específicamente, la función tiene como propósito calcular la tasa de
+crecimiento o variación porcentual promedio compuesta de una o varias
+series de tiempo a partir de sus variaciones porcentuales periódicas.
+
+``` r
+
+# Datos simulados: 72 meses desde enero de 2018.
+# fix: caminata aleatoria en torno a 19 pesos por dólar (nivel).
+# fbcf: variación anual simulada, con una distribución normal con media 1 y desviación 2.
+
+datos <- data.frame(
+  fecha = seq(as.Date("2018-01-01"), by = "month", length.out = 72),
+  fix = 18 + cumsum(rnorm(72, 0.02, 0.3)),
+  fbcf = rnorm(72, 1, 2))
+
+# Variación porcentual anual del FIX (la FBCF ya está en variación anual):
+datos$fix <- c(rep(NA, 12), (datos$fix[13:72] / datos$fix[1:60] - 1) * 100)
+
+#Resultado:
+estadisticos_ts(df = datos)
+#>   indicador observaciones    maximo    minimo    media media_aritmetica
+#> 1       fix            60 20.022798 -9.740657 2.725532        2.9829418
+#> 2      fbcf            72  6.016912 -4.042902 0.896763        0.9190246
+#>     mediana desv_esta         Q1       Q3      RIQ       sesgo curtosis
+#> 1 2.2256406  7.391812 -1.4748880 5.976902 7.451790  0.38906369 2.648619
+#> 2 0.8340547  2.132869 -0.7188016 2.475462 3.194264 -0.08501432 2.466313
+```

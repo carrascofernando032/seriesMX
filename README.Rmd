@@ -32,7 +32,7 @@ En ese sentido, para acceder a los datos a través de las API's web no es necesa
 
 Sin embargo, es importante señalar que ambos sistemas requieren que se lleve a cabo un registro en sus "portales de desarrolladores" para obtener un "Token" o clave de acceso digital, la cual viaja junto con la petición web para registar y validar el acceso del usuario.
 
-# Enlace del portal de desarrolladores de la API del Banco de Indicadores (BIE) o del Sistema de Información Económica (SIE).
+# Enlace del portal de desarrolladores de la API del Banco de Indicadores (BIE) o del Sistema de Información Económica (SIE)
 
 A través de estos portales, los desarrolladores o analistas que requieren la automatización del proceso de extracción de información económica publicada por INEGI y Banxico, pueden acceder a los datos correspondientes.
 
@@ -46,7 +46,7 @@ Para consultar la dirección URL de la información asociada a los indicadores, 
 
 Cualquier lenguaje de programación que tenga la capacidad de conectarse a internet (como Python, R o incluso macros avanzadas de Excel) puede consumir estas herramientas enviando peticiones HTTPS de forma remota.
 
-# Acceso al Token de autenticación para realizar las peticiones de información al API del BIE o SIE.
+# Acceso al Token de autenticación para realizar las peticiones de información al API del BIE o SIE
 
 Antes de usar seriesMX, es indispensable consultar los siguientes enlaces para generar los token correspondientes: 
 
@@ -59,7 +59,7 @@ https://www.banxico.org.mx/SieAPIRest/service/v1/token
 Nota: en la práctica es posible generar más de un token, su propósito sólo es controlar el flujo de acceso a las API's desde los servidores de INEGI y Banxico.
 
 
-# Instalación del paquete.
+# Instalación del paquete
 
 Puede instalar la última versión del paquete "seriesMX" desde [GitHub](https://github.com/):
 
@@ -68,7 +68,7 @@ Puede instalar la última versión del paquete "seriesMX" desde [GitHub](https:/
 pak::pak("carrascofernando032/seriesMX")
 ```
 
-# Módulo de consumo e integración de las API's de INEGI y Banxico.
+# Módulo 1. Consumo e integración de las API's de INEGI y Banxico
 
 En seriesMX, las funciones denominadas "api_bie" y "api_sie" son los componentes del paquete que conectan y extraen información de las API's de INEGI y Banxico.
 
@@ -108,7 +108,7 @@ Argumentos:
 - Formato de respuesta de la información: 
 "&mediaType=json"
 
-# Características del resultado de api_bie y api_sie
+# Módulo 2. Resultado de api_bie y api_sie
 
 ## Data frame
 Un data frame en R es una estructura de datos bidimensional (en forma de tabla con filas y columnas) que permite almacenar datos heterogéneos.Es el objeto más utilizado para el análisis estadístico y la manipulación de información en R, ya que funciona de forma similar a una hoja de cálculo de Excel.
@@ -125,7 +125,7 @@ token = "ejemplo_tokenf1a58e29e-8796-409c-9aeb-3206889b2067",
 formato_resp = "?type=json")
 ```
 
-# Módulo para la unión y visualización de los datos a través de una variable en común: periodo de tiempo
+# Módulo 3. Unión y visualización de los datos a través de una variable en común: periodo de tiempo
 
 Este módulo está diseñado para tomar los datos extraídos de las API de BIE (INEGI) y SIE (Banco de México) y generar visualizaciones de las series. En la ciencia de datos es común tener que unir bases entre sí, pues un álisis no implica trabajar con una sola base o dataframe, al contrario, se suele trabajar con múltiples bases y generalmente (casi siempre) se requiere combinarlas para dar respuesta a las preguntas que motivan el análisis.
 
@@ -198,4 +198,33 @@ graficar_ts(df = fix_fbcf,
   subtitulo = "Base 2018 = 100 para la FBCF, a.e.")
 
 ```
+# Módulo 4. Transformaciones macroeconómicas y aritmética porcentual
+
+Este módulo pretende proporcionar una metodología adecuada para el cálculo de tasas y variaciones porcentuales de las series de indicadores, evitando errores comunes de suma directa de porcentajes.
+
+## Función "estadisticos_ts" del paquete seriesMX
+
+Calcula estadísticos descriptivos de una o varias series de tasas de variación porcentual: número de observaciones, máximo, mínimo, media geométrica, media aritmética, mediana, desviación estándar, primer y tercer cuartil, rango intercuartílico, sesgo y curtosis.
+
+Específicamente, la función tiene como propósito calcular la tasa de crecimiento o variación porcentual promedio compuesta de una o varias series de tiempo a partir de sus variaciones porcentuales periódicas.
+
+```{r ejemplo-estadisticos_ts}
+
+# Datos simulados: 72 meses desde enero de 2018.
+# fix: caminata aleatoria en torno a 19 pesos por dólar (nivel).
+# fbcf: variación anual simulada, con una distribución normal con media 1 y desviación 2.
+
+datos <- data.frame(
+  fecha = seq(as.Date("2018-01-01"), by = "month", length.out = 72),
+  fix = 18 + cumsum(rnorm(72, 0.02, 0.3)),
+  fbcf = rnorm(72, 1, 2))
+
+# Variación porcentual anual del FIX (la FBCF ya está en variación anual):
+datos$fix <- c(rep(NA, 12), (datos$fix[13:72] / datos$fix[1:60] - 1) * 100)
+
+#Resultado:
+estadisticos_ts(df = datos)
+
+```
+
 
