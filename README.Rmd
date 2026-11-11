@@ -225,6 +225,13 @@ datos$fix <- c(rep(NA, 12), (datos$fix[13:72] / datos$fix[1:60] - 1) * 100)
 #Resultado:
 estadisticos_ts(df = datos)
 
+#Panel de histogramas de las series de indicadores junto con sus estadísticos descriptivos.
+comparar_est_ts(datos,  indicadores = NULL, 
+                estadistico = "media",
+                bins = 30, ncol = 1, 
+                escalas = "fixed")
+
+
 ```
 
 

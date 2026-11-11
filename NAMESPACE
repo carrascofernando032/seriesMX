@@ -2,6 +2,7 @@
 
 export(api_bie)
 export(api_sie)
+export(comparar_est_ts)
 export(estadisticos_ts)
 export(graficar_ts)
 export(indice)
@@ -23,6 +24,7 @@ importFrom(moments,
   kurtosis,
   skewness
 )
+importFrom(rlang,.data)
 importFrom(stats,
   IQR,
   median,

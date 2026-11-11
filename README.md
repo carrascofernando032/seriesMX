@@ -305,10 +305,18 @@ datos$fix <- c(rep(NA, 12), (datos$fix[13:72] / datos$fix[1:60] - 1) * 100)
 
 #Resultado:
 estadisticos_ts(df = datos)
-#>   indicador observaciones    maximo    minimo    media media_aritmetica
-#> 1       fix            60 20.022798 -9.740657 2.725532        2.9829418
-#> 2      fbcf            72  6.016912 -4.042902 0.896763        0.9190246
-#>     mediana desv_esta         Q1       Q3      RIQ       sesgo curtosis
-#> 1 2.2256406  7.391812 -1.4748880 5.976902 7.451790  0.38906369 2.648619
-#> 2 0.8340547  2.132869 -0.7188016 2.475462 3.194264 -0.08501432 2.466313
+#>   indicador observaciones    maximo     minimo    media media_aritmetica
+#> 1       fix            60 12.412938 -10.099346 1.223088         1.411609
+#> 2      fbcf            72  5.787598  -3.172307 1.240259         1.260856
+#>    mediana desv_esta           Q1       Q3      RIQ       sesgo curtosis
+#> 1 1.736036  6.213526 -3.818493111 5.482657 9.301150 -0.10599777 2.036043
+#> 2 1.144304  2.056596 -0.009716117 2.652570 2.662287  0.02417627 2.488473
+
+#Panel de histogramas de las series de indicadores junto con sus estadísticos descriptivos.
+comparar_est_ts(datos,  indicadores = NULL, 
+                estadistico = "media",
+                bins = 30, ncol = 1, 
+                escalas = "fixed")
 ```
+
+<img src="man/figures/README-ejemplo-estadisticos_ts-1.png" alt="" width="100%" />
