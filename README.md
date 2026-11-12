@@ -116,8 +116,7 @@ Producto Interno Bruto (base 2018).
 
 Argumentos:
 
-- URL del indicador que se desea consultar a través de la API:
-  “<https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/736183/es/00/false/BIE-BISE/2.0/>”
+- URL del indicador que se desea consultar a través de la API.
 
 - Token de autenticación: Usar la función tokens() de seriesMX para
   configurar token_bie.
@@ -130,8 +129,7 @@ determinación (FIX).
 
 Argumentos:
 
-- URL del indicador que se desea consultar a través de la API:
-  “<https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908/datos?token=>”
+- URL del indicador que se desea consultar a través de la API.
 
 - Token de autenticación: Usar la función tokens() de seriesMX para
   configurar token_sie.
