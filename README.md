@@ -128,9 +128,10 @@ Argumentos:
 Ejemplo api_sie - Banxico. Tipo de cambio mensual, fecha de
 determinación (FIX).
 
-Argumentos: - URL del indicador que se desea consultar a través de la
-API:
-“<https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908/datos?token=>”
+Argumentos:
+
+- URL del indicador que se desea consultar a través de la API:
+  “<https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908/datos?token=>”
 
 - Token de autenticación: Usar la función tokens() de seriesMX para
   configurar token_sie.
@@ -138,7 +139,7 @@ API:
 - Formato de respuesta de la información: JSON por construcción del
   paquete seriesMX.
 
-# Módulo 2. Resultado de api_bie y api_sie
+# Módulo 2. Resultados de api_bie y api_sie
 
 ## Data frame
 
@@ -242,11 +243,9 @@ tokens(token_bie = Sys.getenv("token_bie_get"),
        token_sie = Sys.getenv("token_sie_get"))
 #> Tokens configurados exitosamente en esta sesion: BIE, SIE
 
-#Sys.getenv("token_bie_get") lee tu token real desde el .Renviron, así que el código no lo expone para este ejemplo.
-
 #Tipo de cambio mensual, fecha de determinación (FIX).
 
-tipo_de_cambio_fix<-api_sie(url = "https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908/datos?token=")
+tipo_de_cambio_fix<-api_sie(url = "https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908")
 
 #Variación porcentual anual de la serie desestacionalizada de la Formación Bruta de Capital Fijo (TOTAL).
 

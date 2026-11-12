@@ -9,10 +9,10 @@
 #'
 #' @examplesIf nzchar(Sys.getenv("token_sie_get"))
 #'
-#' url_fix<-paste0("https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908/datos?token=")
+#' url_fix<-paste0("https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908")
 #' api_sie(url = url_fix)
 #'
-#' url_tiie<-paste0("https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF331451/datos?token=")
+#' url_tiie<-paste0("https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF331451")
 #' api_sie(url = url_tiie)
 #'
 #'
@@ -25,8 +25,9 @@ api_sie<-function(url){
   if (is.null(token) || token == "") {
     stop("Token de autenticacion no configurado exitosamente.")
   }
+  entrada_token <- "/datos?token="
   formato_resp <- "&mediaType=json"
-  url_api<- paste0(url,token,formato_resp) #1. Registrar el URL, Token y formato de respuesta (JSON) para cossultar información a través de la API.
+  url_api<- paste0(url,entrada_token,token,formato_resp) #1. Registrar el URL, Token y formato de respuesta (JSON) para cossultar información a través de la API.
   respuesta <- httr::GET(url_api) #2. Comando para llevar a cabo la consulta de información.
   httr::stop_for_status(respuesta)
   datosgenerales<-httr::content(respuesta, as = "text", encoding = "UTF-8") #3. Respuesta de la consulta de información.

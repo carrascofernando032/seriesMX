@@ -18,10 +18,10 @@ Consulta y actualización de indicadores a través de la API del Sistema de Info
 \examples{
 \dontshow{if (nzchar(Sys.getenv("token_sie_get"))) withAutoprint(\{ # examplesIf}
 
-url_fix<-paste0("https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908/datos?token=")
+url_fix<-paste0("https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908")
 api_sie(url = url_fix)
 
-url_tiie<-paste0("https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF331451/datos?token=")
+url_tiie<-paste0("https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF331451")
 api_sie(url = url_tiie)
 
 \dontshow{\}) # examplesIf}
