@@ -1,6 +1,6 @@
 #' Consulta y actualización de indicadores a través de la API del Sistema de Información Económica (SIE) del Banco de México
 #'
-#' @param url El URL de la API de INEGI excluyendo el TOKEN y el formato de respuesta de la información (JSON).
+#' @param url URL de la consulta al SIE de Banxico (el paquete seriesMX agrega el token y el formato). El token se configura con [tokens()].
 
 #' @returns Un dataframe que contiene los datos de la serie de tiempo solicitada.
 #' @importFrom httr content GET

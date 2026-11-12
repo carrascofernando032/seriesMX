@@ -1,6 +1,6 @@
 #' Consulta y actualización de indicadores a través de la API del Banco de Información Económica (BIE) del INEGI
 #'
-#' @param url El URL de la API de INEGI excluyendo el TOKEN y el formato de respuesta de la información (JSON).
+#' @param url URL de la consulta al BIE de INEGI, sin el token ni el formato de respuesta (el paquete seriesMX los agrega). El token se configura con [tokens()].
 #'
 #' @returns Un dataframe que contiene los datos de la serie de tiempo solicitada.
 #' @importFrom httr content GET

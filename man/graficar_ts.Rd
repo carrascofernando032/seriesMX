@@ -77,6 +77,7 @@ con \code{NA} los periodos faltantes para que el objeto \code{ts} quede bien
 alineado.
 }
 \examples{
+
 set.seed(123)
 datos <- data.frame(
   fecha = seq(as.Date("2018-01-01"), by = "month", length.out = 72),
@@ -98,21 +99,25 @@ graficar_ts(
 )
 
 \dontrun{
-#Con datos reales de las API's (requiere tokens personales):
+#Con datos reales:
 
 library(tidyverse)
 library(seriesMX)
 
+#Configuración de tokens:
+
+tokens(token_bie = Sys.getenv("token_bie_get"), token_sie = Sys.getenv("token_sie_get"))
+
 #Tipo de cambio mensual, fecha de determinación (FIX).
 
-tipo_de_cambio_fix<-api_sie(url = paste0("https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908/datos?token="),
-token = "5864e518164893a673fa467ac9e759836dbee33aecc73525d1e1f03254e44a50",
-formato_resp = "&mediaType=json")
+url_fix<-paste0("https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908")
+tipo_de_cambio_fix<- api_sie(url_fix)
 
-#Variación porcentual anual de la serie desestacionalizada de la Formación Bruta de Capital Fijo (TOTAL).
-formacion_bcf<-api_bie(url = paste0("https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/741104/es/00/false/BIE-BISE/2.0/"),
-token = "c1a58e29e-8796-409c-9aeb-3206889b2005",
-formato_resp = "?type=json")
+
+#Variación porcentual anual de la FBCF, serie desestacionalizada (total).
+
+url_fbcf<-paste0("https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/741104/es/00/false/BIE-BISE/2.0/")
+formacion_bcf<-api_bie(url_fbcf)
 
 #Homologación de las fechas:
 

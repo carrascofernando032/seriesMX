@@ -7,7 +7,7 @@
 api_sie(url)
 }
 \arguments{
-\item{url}{El URL de la API de INEGI excluyendo el TOKEN y el formato de respuesta de la información (JSON).}
+\item{url}{URL de la consulta al SIE de Banxico (el paquete seriesMX agrega el token y el formato). El token se configura con \code{\link[=tokens]{tokens()}}.}
 }
 \value{
 Un dataframe que contiene los datos de la serie de tiempo solicitada.

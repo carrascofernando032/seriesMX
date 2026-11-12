@@ -17,6 +17,11 @@
 #' @export
 #'
 #' @examples
+#'
+#' # Datos simulados: 72 meses desde enero de 2018 (con semilla fija).
+#' # fix: caminata aleatoria que parte de 18 pesos por dólar (nivel).
+#' # fbcf: variación anual simulada, normal con media 1 y desviación estándar 2.
+#'
 #' set.seed(123)
 #' datos <- data.frame(
 #'   fecha = seq(as.Date("2018-01-01"), by = "month", length.out = 72),
@@ -28,10 +33,6 @@
 #'
 #' estadisticos_ts(df = datos)
 #'
-#' #1.Cada vez que se ejecute el ejemplo, las variables aleatorias (fix y fbcf) estarán conformadas exactamente por los mismos números.
-#' #2.Se genera una secuencia de 72 fechas mensuales comenzando el 1 de enero de 2018 ("2018-01-01"). Al avanzar mes por mes durante 72 periodos, la serie terminará en diciembre de 2023.
-#' #3.Se simula una variable económica con comportamiento de caminata aleatoria (random walk), típica de un tipo de cambio como el dólar FIX. Parte de un valor base igual a 18 pesos por dólar.
-#' #4.Se simula una segunda variable (la tasa de variación porcentual anual de la Formación Bruta de Capital Fijo) sin tendencia acumulada. Genera 72 valores independientes con distribución normal, centrados alrededor de una media de 1 y con una desviación estándar de 2.
 #'
 estadisticos_ts <- function(df, indicadores = NULL, na.rm = TRUE) {
   if (!is.data.frame(df)) stop("`df` debe ser un data frame.", call. = FALSE)
