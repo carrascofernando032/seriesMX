@@ -8,6 +8,7 @@ export(graficar_ts)
 export(indice)
 export(resumen)
 export(suma_porc)
+export(tokens)
 importFrom(dplyr,summarise)
 importFrom(graphics,
   grid,

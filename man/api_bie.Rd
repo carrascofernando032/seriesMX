@@ -4,27 +4,25 @@
 \alias{api_bie}
 \title{Consulta y actualización de indicadores a través de la API del Banco de Información Económica (BIE) del INEGI}
 \usage{
-api_bie(url, token, formato_resp)
+api_bie(url)
 }
 \arguments{
 \item{url}{El URL de la API de INEGI excluyendo el TOKEN y el formato de respuesta de la información (JSON).}
-
-\item{token}{Token personal}
-
-\item{formato_resp}{Formato de respuesta de la información consultada a través de la API: "?type=json"}
 }
 \value{
-Un dataframe que contiene la serie de tiempo solicitada y sus características más importantes (metadatos).
+Un dataframe que contiene los datos de la serie de tiempo solicitada.
 }
 \description{
 Consulta y actualización de indicadores a través de la API del Banco de Información Económica (BIE) del INEGI
 }
 \examples{
-api_bie(url = paste0("https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/736183/es/00/false/BIE-BISE/2.0/"),
-token = "f1a58e29e-8796-409c-9aeb-3206889b2005",
-formato_resp = "?type=json")
-api_bie(url = paste0("https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/741104/es/00/false/BIE-BISE/2.0/"),
-token = "c1a58e29e-8796-409c-9aeb-3206889b2005",
-formato_resp = "?type=json")
+\dontshow{if (nzchar(Sys.getenv("token_bie_get"))) withAutoprint(\{ # examplesIf}
 
+url_pib <-paste0(url = "https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/736183/es/00/false/BIE-BISE/2.0/")
+api_bie(url = url_pib)
+
+url_fbcf<-paste0(url = "https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/741104/es/00/false/BIE-BISE/2.0/")
+api_bie(url = url_fbcf)
+
+\dontshow{\}) # examplesIf}
 }

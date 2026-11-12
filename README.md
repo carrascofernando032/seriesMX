@@ -119,9 +119,11 @@ Argumentos:
 - URL del indicador que se desea consultar a través de la API:
   “<https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/736183/es/00/false/BIE-BISE/2.0/>”
 
-- Token de autenticación: “f1a58e29e-8796-409c-9aeb-3206889b2067”
+- Token de autenticación: Usar la función tokens() de seriesMX para
+  configurar token_bie.
 
-- Formato de respuesta de la información: “?type=json”
+- Formato de respuesta de la información: JSON por construcción del
+  paquete seriesMX.
 
 Ejemplo api_sie - Banxico. Tipo de cambio mensual, fecha de
 determinación (FIX).
@@ -130,10 +132,11 @@ Argumentos: - URL del indicador que se desea consultar a través de la
 API:
 “<https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908/datos?token=>”
 
-- Token de autenticación:
-  “5864e518164893a673fa467ac9e759836dbee33aecc73525d1e1f03254e43b70”
+- Token de autenticación: Usar la función tokens() de seriesMX para
+  configurar token_sie.
 
-- Formato de respuesta de la información: “&mediaType=json”
+- Formato de respuesta de la información: JSON por construcción del
+  paquete seriesMX.
 
 # Módulo 2. Resultado de api_bie y api_sie
 
@@ -156,9 +159,13 @@ estandarizan los data frames que resulten de utilizar estas funciones.
 
 ``` r
 library(seriesMX)
-api_bie(url = paste0("https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/736183/es/00/false/BIE-BISE/2.0/"),
-token = "ejemplo_tokenf1a58e29e-8796-409c-9aeb-3206889b2067",
-formato_resp = "?type=json")
+
+tokens(token_bie = Sys.getenv("token_bie_get"),
+       token_sie = Sys.getenv("token_sie_get"))
+
+pib_ae_736183<-"https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/736183/es/00/false/BIE-BISE/2.0/"
+
+api_bie(pib_ae_736183)
 ```
 
 # Módulo 3. Unión y visualización de los datos a través de una variable en común: periodo de tiempo
@@ -229,17 +236,21 @@ library(tidyverse)
 #> ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
 library(seriesMX)
 
+#Configuración de los tokens de autenticación del BIE y Sie para utilizar las funciones api_bie y api_sie.
+
+tokens(token_bie = Sys.getenv("token_bie_get"),
+       token_sie = Sys.getenv("token_sie_get"))
+#> Tokens configurados exitosamente en esta sesion: BIE, SIE
+
+#Sys.getenv("token_bie_get") lee tu token real desde el .Renviron, así que el código no lo expone para este ejemplo.
+
 #Tipo de cambio mensual, fecha de determinación (FIX).
 
-tipo_de_cambio_fix<-api_sie(url = paste0("https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908/datos?token="),
-token = "5864e518164893a673fa467ac9e759836dbee33aecc73525d1e1f03254e44a50",
-formato_resp = "&mediaType=json")
+tipo_de_cambio_fix<-api_sie(url = "https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908/datos?token=")
 
 #Variación porcentual anual de la serie desestacionalizada de la Formación Bruta de Capital Fijo (TOTAL).
 
-formacion_bcf<-api_bie(url = paste0("https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/741104/es/00/false/BIE-BISE/2.0/"),
-token = "c1a58e29e-8796-409c-9aeb-3206889b2005",
-formato_resp = "?type=json")
+formacion_bcf<-api_bie(url = "https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/741104/es/00/false/BIE-BISE/2.0/")
 
 #Homologación de las fechas:
 
@@ -259,7 +270,6 @@ fix_fbcf<- tipo_de_cambio_fix%>%
   mutate(var_anual_fix = (fix / lag(fix, n = 12) - 1) * 100)%>%
   select(fecha, fbcf, var_anual_fix)
 
-
 #Usar la función "graficar_ts" de seriesMX: 
 
 graficar_ts(df = fix_fbcf,
@@ -272,11 +282,13 @@ graficar_ts(df = fix_fbcf,
 ```
 
 <img src="man/figures/README-ejemplo-integracion-series-1.png" alt="" width="100%" />
-\# Módulo 4. Transformaciones macroeconómicas y aritmética porcentual
+
+# Módulo 4. Transformaciones y aritmética porcentual
 
 Este módulo pretende proporcionar una metodología adecuada para el
 cálculo de tasas y variaciones porcentuales de las series de
-indicadores, evitando errores comunes de suma directa de porcentajes.
+indicadores, evitando errores comunes de suma, resta, multiplicación y
+división directa de porcentajes.
 
 ## Función “estadisticos_ts” del paquete seriesMX
 
@@ -295,6 +307,7 @@ series de tiempo a partir de sus variaciones porcentuales periódicas.
 # fix: caminata aleatoria en torno a 19 pesos por dólar (nivel).
 # fbcf: variación anual simulada, con una distribución normal con media 1 y desviación 2.
 
+set.seed(123)
 datos <- data.frame(
   fecha = seq(as.Date("2018-01-01"), by = "month", length.out = 72),
   fix = 18 + cumsum(rnorm(72, 0.02, 0.3)),
@@ -305,12 +318,12 @@ datos$fix <- c(rep(NA, 12), (datos$fix[13:72] / datos$fix[1:60] - 1) * 100)
 
 #Resultado:
 estadisticos_ts(df = datos)
-#>   indicador observaciones    maximo     minimo    media media_aritmetica
-#> 1       fix            60 12.412938 -10.099346 1.223088         1.411609
-#> 2      fbcf            72  5.787598  -3.172307 1.240259         1.260856
-#>    mediana desv_esta           Q1       Q3      RIQ       sesgo curtosis
-#> 1 1.736036  6.213526 -3.818493111 5.482657 9.301150 -0.10599777 2.036043
-#> 2 1.144304  2.056596 -0.009716117 2.652570 2.662287  0.02417627 2.488473
+#>   indicador observaciones   maximo    minimo     media media_aritmetica
+#> 1       fix            60 9.818249 -9.797683 1.8161194        1.9082271
+#> 2      fbcf            72 5.374666 -3.106494 0.8743851        0.8908638
+#>     mediana desv_esta         Q1       Q3      RIQ      sesgo curtosis
+#> 1 2.4120451  4.327793 -0.3087250 5.105226 5.413951 -0.6080405 2.877423
+#> 2 0.7898006  1.838247 -0.3219292 2.053309 2.375238  0.2061461 2.688179
 
 #Panel de histogramas de las series de indicadores junto con sus estadísticos descriptivos.
 comparar_est_ts(datos,  indicadores = NULL, 

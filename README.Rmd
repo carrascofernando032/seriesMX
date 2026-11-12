@@ -90,10 +90,10 @@ Argumentos:
 "https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/736183/es/00/false/BIE-BISE/2.0/"
 
 - Token de autenticación:
-"f1a58e29e-8796-409c-9aeb-3206889b2067"
+Usar la función tokens() de seriesMX para configurar token_bie.
 
 - Formato de respuesta de la información: 
-"?type=json"
+JSON por construcción del paquete seriesMX.
 
 Ejemplo api_sie - Banxico. 
 Tipo de cambio mensual, fecha de determinación (FIX).
@@ -103,10 +103,10 @@ Argumentos:
 "https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908/datos?token="
 
 - Token de autenticación:
-"5864e518164893a673fa467ac9e759836dbee33aecc73525d1e1f03254e43b70"
+Usar la función tokens() de seriesMX para configurar token_sie.
 
 - Formato de respuesta de la información: 
-"&mediaType=json"
+JSON por construcción del paquete seriesMX.
 
 # Módulo 2. Resultado de api_bie y api_sie
 
@@ -120,9 +120,13 @@ Debido a la heterogenidad en la información que proviene de los servidores del 
 
 ```{r ejemplo-api-bie, eval=FALSE}
 library(seriesMX)
-api_bie(url = paste0("https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/736183/es/00/false/BIE-BISE/2.0/"),
-token = "ejemplo_tokenf1a58e29e-8796-409c-9aeb-3206889b2067",
-formato_resp = "?type=json")
+
+tokens(token_bie = Sys.getenv("token_bie_get"),
+       token_sie = Sys.getenv("token_sie_get"))
+
+pib_ae_736183<-"https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/736183/es/00/false/BIE-BISE/2.0/"
+
+api_bie(pib_ae_736183)
 ```
 
 # Módulo 3. Unión y visualización de los datos a través de una variable en común: periodo de tiempo
@@ -156,17 +160,20 @@ La función "graficar_ts" de seriesMX automatiza la construcción de una gráfic
 library(tidyverse)
 library(seriesMX)
 
+#Configuración de los tokens de autenticación del BIE y Sie para utilizar las funciones api_bie y api_sie.
+
+tokens(token_bie = Sys.getenv("token_bie_get"),
+       token_sie = Sys.getenv("token_sie_get"))
+
+#Sys.getenv("token_bie_get") lee tu token real desde el .Renviron, así que el código no lo expone para este ejemplo.
+
 #Tipo de cambio mensual, fecha de determinación (FIX).
 
-tipo_de_cambio_fix<-api_sie(url = paste0("https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908/datos?token="),
-token = "5864e518164893a673fa467ac9e759836dbee33aecc73525d1e1f03254e44a50",
-formato_resp = "&mediaType=json")
+tipo_de_cambio_fix<-api_sie(url = "https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908/datos?token=")
 
 #Variación porcentual anual de la serie desestacionalizada de la Formación Bruta de Capital Fijo (TOTAL).
 
-formacion_bcf<-api_bie(url = paste0("https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/741104/es/00/false/BIE-BISE/2.0/"),
-token = "c1a58e29e-8796-409c-9aeb-3206889b2005",
-formato_resp = "?type=json")
+formacion_bcf<-api_bie(url = "https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/741104/es/00/false/BIE-BISE/2.0/")
 
 #Homologación de las fechas:
 
@@ -186,7 +193,6 @@ fix_fbcf<- tipo_de_cambio_fix%>%
   mutate(var_anual_fix = (fix / lag(fix, n = 12) - 1) * 100)%>%
   select(fecha, fbcf, var_anual_fix)
 
-
 #Usar la función "graficar_ts" de seriesMX: 
 
 graficar_ts(df = fix_fbcf,
@@ -198,9 +204,10 @@ graficar_ts(df = fix_fbcf,
   subtitulo = "Base 2018 = 100 para la FBCF, a.e.")
 
 ```
-# Módulo 4. Transformaciones macroeconómicas y aritmética porcentual
 
-Este módulo pretende proporcionar una metodología adecuada para el cálculo de tasas y variaciones porcentuales de las series de indicadores, evitando errores comunes de suma directa de porcentajes.
+# Módulo 4. Transformaciones y aritmética porcentual
+
+Este módulo pretende proporcionar una metodología adecuada para el cálculo de tasas y variaciones porcentuales de las series de indicadores, evitando errores comunes de suma, resta, multiplicación y división directa de porcentajes.
 
 ## Función "estadisticos_ts" del paquete seriesMX
 
@@ -214,6 +221,7 @@ Específicamente, la función tiene como propósito calcular la tasa de crecimie
 # fix: caminata aleatoria en torno a 19 pesos por dólar (nivel).
 # fbcf: variación anual simulada, con una distribución normal con media 1 y desviación 2.
 
+set.seed(123)
 datos <- data.frame(
   fecha = seq(as.Date("2018-01-01"), by = "month", length.out = 72),
   fix = 18 + cumsum(rnorm(72, 0.02, 0.3)),

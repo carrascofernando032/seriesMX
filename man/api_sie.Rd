@@ -4,27 +4,25 @@
 \alias{api_sie}
 \title{Consulta y actualización de indicadores a través de la API del Sistema de Información Económica (SIE) del Banco de México}
 \usage{
-api_sie(url, token, formato_resp)
+api_sie(url)
 }
 \arguments{
 \item{url}{El URL de la API de INEGI excluyendo el TOKEN y el formato de respuesta de la información (JSON).}
-
-\item{token}{Token personal}
-
-\item{formato_resp}{Formato de respuesta de la información consultada a través de la API: "?type=json"}
 }
 \value{
-Un dataframe que contiene la serie de tiempo solicitada y sus características más importantes (metadatos).
+Un dataframe que contiene los datos de la serie de tiempo solicitada.
 }
 \description{
 Consulta y actualización de indicadores a través de la API del Sistema de Información Económica (SIE) del Banco de México
 }
 \examples{
-api_sie(url = paste0("https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908/datos?token="),
-token = "5864e518164893a673fa467ac9e759836dbee33aecc73525d1e1f03254e44a50",
-formato_resp = "&mediaType=json")
-api_sie(url = paste0("https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF331451/datos?token="),
-token = "5864e518164893a673fa467ac9e759836dbee33aecc73525d1e1f03254e44a50",
-formato_resp = "&mediaType=json")
+\dontshow{if (nzchar(Sys.getenv("token_sie_get"))) withAutoprint(\{ # examplesIf}
 
+url_fix<-paste0("https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908/datos?token=")
+api_sie(url = url_fix)
+
+url_tiie<-paste0("https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF331451/datos?token=")
+api_sie(url = url_tiie)
+
+\dontshow{\}) # examplesIf}
 }

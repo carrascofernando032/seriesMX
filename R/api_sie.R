@@ -1,23 +1,31 @@
 #' Consulta y actualización de indicadores a través de la API del Sistema de Información Económica (SIE) del Banco de México
 #'
 #' @param url El URL de la API de INEGI excluyendo el TOKEN y el formato de respuesta de la información (JSON).
-#' @param token Token personal
-#' @param formato_resp Formato de respuesta de la información consultada a través de la API: "?type=json"
-#'
-#' @returns Un dataframe que contiene la serie de tiempo solicitada y sus características más importantes (metadatos).
+
+#' @returns Un dataframe que contiene los datos de la serie de tiempo solicitada.
 #' @importFrom httr content GET
 #' @importFrom jsonlite fromJSON
 #' @export
 #'
-#' @examples
-#' api_sie(url = paste0("https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908/datos?token="),
-#' token = "5864e518164893a673fa467ac9e759836dbee33aecc73525d1e1f03254e44a50",
-#' formato_resp = "&mediaType=json")
-#' api_sie(url = paste0("https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF331451/datos?token="),
-#' token = "5864e518164893a673fa467ac9e759836dbee33aecc73525d1e1f03254e44a50",
-#' formato_resp = "&mediaType=json")
+#' @examplesIf nzchar(Sys.getenv("token_sie_get"))
 #'
-api_sie<-function(url,token,formato_resp){
+#' url_fix<-paste0("https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908/datos?token=")
+#' api_sie(url = url_fix)
+#'
+#' url_tiie<-paste0("https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF331451/datos?token=")
+#' api_sie(url = url_tiie)
+#'
+#'
+api_sie<-function(url){
+  token <- if (!is.null(.pkg_env$config$token_sie)) {
+    .pkg_env$config$token_sie
+  } else {
+    Sys.getenv("token_sie_get", unset = "")
+  }
+  if (is.null(token) || token == "") {
+    stop("Token de autenticacion no configurado exitosamente.")
+  }
+  formato_resp <- "&mediaType=json"
   url_api<- paste0(url,token,formato_resp) #1. Registrar el URL, Token y formato de respuesta (JSON) para cossultar información a través de la API.
   respuesta <- httr::GET(url_api) #2. Comando para llevar a cabo la consulta de información.
   httr::stop_for_status(respuesta)
