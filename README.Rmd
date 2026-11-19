@@ -246,12 +246,19 @@ datos$fix <- c(rep(NA, 12), (datos$fix[13:72] / datos$fix[1:60] - 1) * 100)
 #Resultado:
 estadisticos_ts(df = datos)
 
-#Panel de histogramas de las series de indicadores junto con sus estadísticos descriptivos.
-comparar_est_ts(datos,  indicadores = NULL, 
-                estadistico = "media",
-                bins = 30, ncol = 1, 
-                escalas = "fixed")
-
+# Panel de histogramas de las series de indicadores
+comparar_est_ts(
+  df = datos,
+  inicio = "2019-01-01",
+  titulo = "Histogramas de la variación anual del FIX y la FBCF",
+  ejex = "Puntos porcentuales",
+  etiquetas = c(
+    "Tipo de cambio (FIX)",
+    "Formación Bruta de Capital Fijo"
+  ),
+  fuente = "Fuente: elaboración propia con datos simulados.",
+  subtitulo = "La línea naranja marca la media geométrica"
+)
 
 ```
 

@@ -2,47 +2,79 @@
 % Please edit documentation in R/comparar_est_ts.R
 \name{comparar_est_ts}
 \alias{comparar_est_ts}
-\title{Panel de histogramas de las series de indicadores junto con sus estadísticos descriptivos.}
+\title{Panel de histogramas de las series de indicadores junto con sus estadísticos descriptivos}
 \usage{
 comparar_est_ts(
   df,
   indicadores = NULL,
+  fecha = "fecha",
+  inicio = NULL,
+  fin = NULL,
   estadistico = "media",
+  titulo = NULL,
+  subtitulo = NULL,
+  fuente = NULL,
+  ejex = "Puntos porcentuales",
+  ejey = "Frecuencia",
+  etiquetas = NULL,
   bins = 30,
   ncol = 1,
   escalas = "fixed"
 )
 }
 \arguments{
-\item{df}{Data frame compuesto por columnas con los estadísticos descriptivos calculados por la función seriesMX}
+\item{df}{Data frame con una columna de fechas y una o más columnas numéricas (indicadores).}
 
-\item{indicadores}{Es un vector de caracteres con los nombres de las columnas que quieres graficar. Cada nombre se convierte en un panel del histograma, y el nombre aparece como título del panel.}
+\item{indicadores}{Vector de caracteres con los nombres de las columnas a graficar.
+Cada columna una se convierte en un panel cuando se usa la función. Por defecto, todas las columnas numéricas excepto la de fechas.}
 
-\item{estadistico}{Es la columna que proviene de estadisticos_ts() que se marca con la línea naranja en cada panel. Los valores útiles son "media" (geométrica, por defecto), "media_aritmetica", "mediana", "Q1", "Q3", "maximo" y "minimo".}
+\item{fecha}{Nombre de la columna de fechas. Por defecto \code{"fecha"}. Solo se usa para recortar el periodo con \code{inicio} y \code{fin}.}
+
+\item{inicio, fin}{Fechas (\code{Date} o texto \code{"AAAA-MM-DD"}) que delimitan el periodo de observación. Si son \code{NULL}, la función utilizará todo el periodo disponible.}
+
+\item{estadistico}{Columna de \code{\link[=estadisticos_ts]{estadisticos_ts()}} que se quiera visualizar con una línea naranja en cada panel: \code{"media"} (geométrica, por defecto), \code{"media_aritmetica"},
+\code{"mediana"}, \code{"Q1"}, \code{"Q3"}, \code{"maximo"} o `"minimo".}
+
+\item{titulo}{Título del panel.}
+
+\item{subtitulo}{Texto sobre el área del panel.}
+
+\item{fuente}{Nota de fuente al pie del panel.}
+
+\item{ejex, ejey}{Etiquetas de los ejes.}
+
+\item{etiquetas}{Títulos de las gráficas correspondientes al panel, en el mismo orden que \code{indicadores}. Por defecto, los nombres de las columnas.}
 
 \item{bins}{Número de barras del histograma (30 por defecto).}
 
 \item{ncol}{Número de columnas de la cuadrícula de paneles.}
 
-\item{escalas}{Con "fixed" todos los paneles comparten ejes. Con "free_x", "free_y" o "free" cada histograma usa los suyos, útil si las simulaciones tienen rangos muy distintos.}
+\item{escalas}{Con \code{"fixed"} todos los paneles comparten ejes. Con \code{"free_x"},\code{"free_y"} o \code{"free"} cada histograma usa los suyos.}
 }
 \value{
-Un panel compuesto por los histogramas de las series de los indicadores.
+Un objeto \code{ggplot} con un panel de histogramas de los indicadores.
 }
 \description{
-La función comparar_est_ts tiene el propósito de juntar los histogramas de dos o más indicadores en un panel para su comparación.
-Para usar esta función, previamente se debió utilizar "estadisticos_ts" de seriesMdf para calcular los estadisticos descriptivos de las series.
+Junta los histogramas de dos o más indicadores en un panel para compararlos. Los estadísticos se calculan internamente con \code{\link[=estadisticos_ts]{estadisticos_ts()}}, y el seleccionado en \code{estadistico} se marca con una línea naranja en cada panel. La interfaz es la misma que la de \code{\link[=graficar_ts]{graficar_ts()}}: un data frame con una columna de fechas y una o más columnas numéricas.
 }
 \examples{
-datos <- data.frame(fecha = seq(as.Date("2018-01-01"), by = "month", length.out = 72),
-fix = 18 + cumsum(rnorm(72, 0.02, 0.3)),
-fbcf = rnorm(72, 1, 2))
+set.seed(123)
+datos <- data.frame(
+  fecha = seq(as.Date("2018-01-01"), by = "month", length.out = 72),
+  fix = 19 + cumsum(rnorm(72, 0.02, 0.3)),
+  fbcf = rnorm(72, 1, 2)
+)
 
 # Variación porcentual anual del FIX (la FBCF ya está en variación anual):
 datos$fix <- c(rep(NA, 12), (datos$fix[13:72] / datos$fix[1:60] - 1) * 100)
 
-comparar_est_ts(datos,  indicadores = NULL, estadistico = "media",
- bins = 30, ncol = 1, escalas = "fixed")
-
-
+comparar_est_ts(
+  df = datos,
+  inicio = "2019-01-01",
+  titulo = "Gráfica 2. Histogramas de la var\% anual del FIX y la FBCF, a.e.",
+  ejex = "Puntos porcentuales",
+  etiquetas = c("Tipo de cambio (FIX)", "Formación Bruta de Capital Fijo, a.e."),
+  fuente = "Fuente: elaboración propia con datos del BIE (INEGI) y el SIE (Banxico).",
+  subtitulo = "La línea naranja marca la media geométrica"
+)
 }

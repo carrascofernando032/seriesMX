@@ -340,11 +340,19 @@ estadisticos_ts(df = datos)
 #> 1 2.4120451  4.327793 -0.3087250 5.105226 5.413951 -0.6080405 2.877423
 #> 2 0.7898006  1.838247 -0.3219292 2.053309 2.375238  0.2061461 2.688179
 
-#Panel de histogramas de las series de indicadores junto con sus estadísticos descriptivos.
-comparar_est_ts(datos,  indicadores = NULL, 
-                estadistico = "media",
-                bins = 30, ncol = 1, 
-                escalas = "fixed")
+# Panel de histogramas de las series de indicadores
+comparar_est_ts(
+  df = datos,
+  inicio = "2019-01-01",
+  titulo = "Histogramas de la variación anual del FIX y la FBCF",
+  ejex = "Puntos porcentuales",
+  etiquetas = c(
+    "Tipo de cambio (FIX)",
+    "Formación Bruta de Capital Fijo"
+  ),
+  fuente = "Fuente: elaboración propia con datos simulados.",
+  subtitulo = "La línea naranja marca la media geométrica"
+)
 ```
 
 <img src="man/figures/README-ejemplo-estadisticos_ts-1.png" alt="" width="100%" />
