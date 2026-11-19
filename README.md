@@ -156,6 +156,24 @@ servidores del Banco de México e INEGI (datos, metadatos, el nombre del
 indicador o la frecuencia de las observaciones) api_bie y api_sie
 estandarizan los data frames que resulten de utilizar estas funciones.
 
+# Recomendación para configurar de los Tokens de autenticación.
+
+Para no escribir los tokens en el código, se recomienda guardarlos en el
+archivo `.Renviron` de su usuario. Se hace una sola vez:
+
+``` r
+# Escribir en la consola lo siguiente:
+
+usethis::edit_r_environ()
+
+# Se abre el archivo. Agrega las siguientes dos líneas (sin comillas), guarda el archivo con una línea en blanco al final y reinicia R:
+
+# token_bie_get=tu_token_del_BIE
+# token_sie_get=tu_token_del_SIE
+```
+
+Después de reiniciar R, en cada sesión basta con:
+
 ``` r
 library(seriesMX)
 
@@ -301,7 +319,7 @@ series de tiempo a partir de sus variaciones porcentuales periódicas.
 ``` r
 
 # Datos simulados: 72 meses desde enero de 2018.
-# fix: caminata aleatoria en torno a 19 pesos por dólar (nivel).
+# fix: caminata aleatoria en torno a 18 pesos por dólar (nivel).
 # fbcf: variación anual simulada, con una distribución normal con media 1 y desviación 2.
 
 set.seed(123)
