@@ -166,7 +166,7 @@ archivo `.Renviron` de su usuario. Se hace una sola vez:
 
 usethis::edit_r_environ()
 
-# Se abre el archivo. Agrega las siguientes dos líneas (sin comillas), guarda el archivo con una línea en blanco al final y reinicia R:
+# Una vez que se abre el archivo, se debe agregar las siguientes dos líneas (sin comillas) y guardar el archivo con una línea en blanco al final para después reiniciar R:
 
 # token_bie_get=tu_token_del_BIE
 # token_sie_get=tu_token_del_SIE
