@@ -344,7 +344,7 @@ estadisticos_ts(df = datos)
 comparar_est_ts(
   df = datos,
   inicio = "2019-01-01",
-  titulo = "Histogramas de la variación anual del FIX y la FBCF",
+  titulo = "Gráfica 2. Panel de histogramas de la variación anual del FIX y la FBCF",
   ejex = "Puntos porcentuales",
   etiquetas = c(
     "Tipo de cambio (FIX)",
