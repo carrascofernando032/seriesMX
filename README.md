@@ -14,7 +14,7 @@ eficiente y segura.
 
 seriesMX es un paquete de R que automatiza la descarga, procesamiento,
 presentación y actualización de diversos indicadores de la economía
-mexicana a través del uso de las API’s web del Sistema de Información
+mexicana a través del uso de la API web del Sistema de Información
 Económica (SIE) de Banco de México (Banxico), y del Banco de Información
 Económica (BIE) del Instituto Nacional de Estadística y Geografía
 (INEGI).
@@ -39,10 +39,11 @@ intercambio de datos web, principalmente JSON o JSON-Stat.
 
 Sin embargo, es importante señalar que ambos sistemas requieren que se
 lleve a cabo un registro en sus “portales de desarrolladores” para
-obtener un “Token” o clave de acceso digital, la cual viaja junto con la
-petición web para registar y validar el acceso del usuario.
+obtener un `token` de autenticación o clave de acceso digital, la cual
+viaja junto con la petición web para registar y validar el acceso del
+usuario.
 
-# Enlace del portal de desarrolladores de la API del Banco de Indicadores (BIE) o del Sistema de Información Económica (SIE)
+# Portal de desarrolladores de Banxico e INEGI.
 
 A través de estos portales, los desarrolladores o analistas que
 requieren la automatización del proceso de extracción de información

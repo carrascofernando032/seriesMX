@@ -10,7 +10,7 @@ Consulta, procesamiento y visualización de series macroeconómicas de México m
 
 Las API's web institucionales son el medio por el cual se presentan diversos indicadores de la economía mexicana al público general para que investigadores y desarrolladores consulten los datos de una manera eficiente y segura.
 
-seriesMX es un paquete de R que automatiza la descarga, procesamiento, presentación y actualización de diversos indicadores de la economía mexicana a través del uso de las API's web del Sistema de Información Económica (SIE) de Banco de México (Banxico), y del Banco de Información Económica (BIE) del Instituto Nacional de Estadística y Geografía (INEGI).
+seriesMX es un paquete de R que automatiza la descarga, procesamiento, presentación y actualización de diversos indicadores de la economía mexicana a través del uso de la API web del Sistema de Información Económica (SIE) de Banco de México (Banxico), y del Banco de Información Económica (BIE) del Instituto Nacional de Estadística y Geografía (INEGI).
 
 ¿Por qué se clasifican como API's Web?
 
@@ -20,9 +20,9 @@ Para más información consultar: https://www.ibm.com/think/topics/api
 
 En ese sentido, para acceder a los datos a través de las API's web no es necesario instalar algún software. En su lugar, se realiza una petición web (una solicitud HTTP) por medio de una dirección URL específica provista por los sistemas informáticos de INEGI y Banxico. Al momento de llevar a cabo la consulta, sus servidores procesan la petición y devuelven la información en formatos estructurados estándar de intercambio de datos web, principalmente JSON o JSON-Stat.
 
-Sin embargo, es importante señalar que ambos sistemas requieren que se lleve a cabo un registro en sus "portales de desarrolladores" para obtener un "Token" o clave de acceso digital, la cual viaja junto con la petición web para registar y validar el acceso del usuario.
+Sin embargo, es importante señalar que ambos sistemas requieren que se lleve a cabo un registro en sus "portales de desarrolladores" para obtener un `token` de autenticación o clave de acceso digital, la cual viaja junto con la petición web para registar y validar el acceso del usuario.
 
-# Enlace del portal de desarrolladores de la API del Banco de Indicadores (BIE) o del Sistema de Información Económica (SIE)
+# Portal de desarrolladores de Banxico e INEGI.
 
 A través de estos portales, los desarrolladores o analistas que requieren la automatización del proceso de extracción de información económica publicada por INEGI y Banxico, pueden acceder a los datos correspondientes.
 
