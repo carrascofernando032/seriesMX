@@ -1,6 +1,15 @@
-.Rproj.user
+.Rproj.user/
 .Rhistory
 .RData
+.Ruserdata
+.Renviron
 .httr-oauth
 .DS_Store
-.quarto
+*.tar.gz
+*.Rcheck/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.xlsx
+verificacion*
+reconsulta*

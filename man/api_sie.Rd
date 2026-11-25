@@ -2,27 +2,31 @@
 % Please edit documentation in R/api_sie.R
 \name{api_sie}
 \alias{api_sie}
-\title{Consulta y actualización de indicadores a través de la API del Sistema de Información Económica (SIE) del Banco de México}
+\title{Consulta de indicadores a través de la API del SIE de Banxico}
 \usage{
-api_sie(url)
+api_sie(url = NULL, clave = NULL)
 }
 \arguments{
-\item{url}{URL de la consulta al SIE de Banxico (el paquete seriesMX agrega el token y el formato). El token se configura con \code{\link[=tokens]{tokens()}}.}
+\item{url}{URL de \code{url_base}, terminada en \verb{/datos}, sin token ni parámetros.
+También acepta la URL anterior sin \verb{/datos} si corresponde al catálogo.}
+
+\item{clave}{Clave del SIE. Si aparece en varias filas, revisa
+\code{\link[=buscar_clave_sie]{buscar_clave_sie()}} y copia una URL en el argumento \code{url}.}
 }
 \value{
-Un dataframe que contiene los datos de la serie de tiempo solicitada.
+Un data frame con \code{serie}, \code{fecha} (Date) y \code{observacion}
+(numérica), ordenado por fecha. Los valores no disponibles quedan como NA.
+Si no hay observaciones o la respuesta es inválida, devuelve un error.
 }
 \description{
-Consulta y actualización de indicadores a través de la API del Sistema de Información Económica (SIE) del Banco de México
+Consulta una serie histórica mediante una URL o una clave de
+\link{catalogo_maestro_banxico}. Configura el token con \code{\link[=tokens]{tokens()}} o mediante
+la variable de entorno \code{token_sie_get}.
 }
 \examples{
 \dontshow{if (nzchar(Sys.getenv("token_sie_get"))) withAutoprint(\{ # examplesIf}
-
-url_fix<-paste0("https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF17908")
-api_sie(url = url_fix)
-
-url_tiie<-paste0("https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF331451")
-api_sie(url = url_tiie)
-
+api_sie(clave = "SF17908")
+ficha <- buscar_clave_sie("SF331451")
+api_sie(url = ficha$url_base[[1L]])
 \dontshow{\}) # examplesIf}
 }

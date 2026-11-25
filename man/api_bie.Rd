@@ -4,25 +4,29 @@
 \alias{api_bie}
 \title{Consulta y actualización de indicadores a través de la API del Banco de Información Económica (BIE) del INEGI}
 \usage{
-api_bie(url)
+api_bie(url = NULL, clave = NULL)
 }
 \arguments{
-\item{url}{URL de la consulta al BIE de INEGI, sin el token ni el formato de respuesta (el paquete seriesMX los agrega). El token se configura con \code{\link[=tokens]{tokens()}}.}
+\item{url}{URL de la consulta al BIE de INEGI, sin el token ni el formato de respuesta (el paquete seriesMX los agrega).}
+
+\item{clave}{Clave del indicador en el catálogo maestro de seriesMX.
+Si la clave aparece en varias filas, use \code{\link[=buscar_clave_bie]{buscar_clave_bie()}} para
+revisar las coincidencias y copie la URL elegida en el argumento \code{url}.}
 }
 \value{
-Un dataframe que contiene los datos de la serie de tiempo solicitada.
+Un data frame con \code{serie}, \code{fecha} (texto) y \code{observacion}
+(numérica). Los periodos se ordenan y las observaciones faltantes son NA.
 }
 \description{
-Consulta y actualización de indicadores a través de la API del Banco de Información Económica (BIE) del INEGI
+Consulte la serie histórica de un indicador del BIE con una URL o una clave del \link{catalogo_maestro_inegi} del paquete seriesMX.
+Configure previamente sus tokens de autenticación con la función \code{\link[=tokens]{tokens()}} o en la variable de entorno
+\code{token_bie_get} del paquete seriesMX.
 }
 \examples{
 \dontshow{if (nzchar(Sys.getenv("token_bie_get"))) withAutoprint(\{ # examplesIf}
+api_bie(clave = "736183")
 
-url_pib <-paste0(url = "https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/736183/es/00/false/BIE-BISE/2.0/")
-api_bie(url = url_pib)
-
-url_fbcf<-paste0(url = "https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR/741104/es/00/false/BIE-BISE/2.0/")
-api_bie(url = url_fbcf)
-
+ficha <- buscar_clave_bie("741104")
+api_bie(url = ficha$url_base)
 \dontshow{\}) # examplesIf}
 }
