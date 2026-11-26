@@ -50,10 +50,14 @@ publicada por INEGI y Banxico, pueden acceder a los datos
 correspondientes.
 
 - INEGI (BIE/BISE):
-  <https://www.inegi.org.mx/servicios/api_indicadores.html>
-  <https://www.inegi.org.mx/servicios/api-indicadores/>
 
-- Banxico (SIE): <https://www.banxico.org.mx/SieAPIRest/service/v1/>
+<https://www.inegi.org.mx/servicios/api_indicadores.html>
+
+<https://www.inegi.org.mx/servicios/api-indicadores/>
+
+- Banxico (SIE):
+
+<https://www.banxico.org.mx/SieAPIRest/service/v1/>
 
 Para consultar la dirección URL de la información asociada a los
 indicadores, los usuarios deben seleccionar el “Constructor de
@@ -177,6 +181,8 @@ temáticas denominadas sector:
 Fuente: cálculo directo sobre data/catalogo_maestro_banxico.rda del
 commit revisado. Una clave BIE y una clave SIE pertenecen a sistemas
 distintos.
+
+## Advertencia sobre el uso de los catálogos
 
 Las 230,309 filas conservan asociaciones temáticas de los indicadores.
 Al contar una vez cada clave dentro de su fuente quedan 221,047 entradas
@@ -343,7 +349,7 @@ tokens(token_bie = Sys.getenv("token_bie_get"),
        token_sie = Sys.getenv("token_sie_get"))
 ```
 
-## 3. Descargar y graficar una o más series por medio de su clave o URL.
+## 3. Descargar y graficar una o más series por medio de su clave o URL
 
 Este módulo está diseñado para demostrar cómo descargar y graficar
 diversas series de indicadores por medio de las API del BIE y SIE con el
@@ -542,13 +548,13 @@ división directa de porcentajes.
 
 ## Función `estadisticos_ts()` del paquete seriesMX
 
-Con esta función del paquete seriesMX es posible calcular estadísticos
-descriptivos de una o varias series de tasas de variación porcentual:
-número de observaciones, máximo, mínimo, media geométrica, media
-aritmética, mediana, desviación estándar, primer y tercer cuartil, rango
-intercuartílico, sesgo y curtosis. Además, con la función
-`comparar_est_ts()` puede generarse un panel de histogramas de los
-indicadores.
+Con la función `estadisticos_ts()` del paquete seriesMX es posible
+calcular estadísticos descriptivos de una o varias series de tasas de
+variación porcentual: número de observaciones, máximo, mínimo, media
+geométrica, media aritmética, mediana, desviación estándar, primer y
+tercer cuartil, rango intercuartílico, sesgo y curtosis. Además, con la
+función `comparar_est_ts()` puede generarse un panel de histogramas de
+los indicadores.
 
 La función `estadisticos_ts()` interpreta las columnas como tasas
 porcentuales y calcula una media geométrica de los factores `1 + x/100`;
