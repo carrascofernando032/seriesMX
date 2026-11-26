@@ -347,6 +347,11 @@ usethis::edit_r_environ()
 
 tokens(token_bie = Sys.getenv("token_bie_get"),
        token_sie = Sys.getenv("token_sie_get"))
+
+#En caso de ser necesario, puede consultar los token configurados con el siguiente comando:
+
+Sys.getenv()[grep("BIE|SIE|TOKEN|INEGI|BANXICO", 
+                 names(Sys.getenv()), ignore.case = TRUE)]
 ```
 
 ## 3. Descargar y graficar una o más series por medio de su clave o URL
