@@ -1,5 +1,5 @@
 Package: seriesMX
-Title: Series temporales de la economía mexicana a través de API's
+Title: Series macroeconómicas de México mediante las API del Banco de Información Económica (BIE) de INEGI y del Sistema de Información Económica (SIE) de Banco de México.
 Version: 0.0.0.9000
 Authors@R:
     person("Fernando", "Carrasco Gutierrez", , "carrascofernando032@gmail.com", role = c("aut", "cre"))

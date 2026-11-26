@@ -10,7 +10,7 @@ Consulta, procesamiento y visualización de series macroeconómicas de México m
 
 Las API's web institucionales son el medio por el cual se presentan diversos indicadores de la economía mexicana al público general para que investigadores y desarrolladores consulten los datos de una manera eficiente y segura.
 
-seriesMX es un paquete de R que automatiza la descarga, procesamiento, presentación y actualización de diversos indicadores de la economía mexicana a través del uso de la API web del Sistema de Información Económica (SIE) de Banco de México (Banxico), y del Banco de Información Económica (BIE) del Instituto Nacional de Estadística y Geografía (INEGI).
+seriesMX es un paquete de R que automatiza la descarga, procesamiento, visualización y actualización de diversos indicadores de la economía mexicana a través del uso de las API web del Sistema de Información Económica (SIE) de Banco de México (Banxico), y del Banco de Información Económica (BIE) del Instituto Nacional de Estadística y Geografía (INEGI).
 
 ¿Por qué se clasifican como API's Web?
 
@@ -18,16 +18,18 @@ Una API web (Application Programming Interface o Interfaz de Programación de Ap
 
 Para más información consultar: https://www.ibm.com/think/topics/api
 
-En ese sentido, para acceder a los datos a través de las API's web no es necesario instalar algún software. En su lugar, se realiza una petición web (una solicitud HTTP) por medio de una dirección URL específica provista por los sistemas informáticos de INEGI y Banxico. Al momento de llevar a cabo la consulta, sus servidores procesan la petición y devuelven la información en formatos estructurados estándar de intercambio de datos web, principalmente JSON o JSON-Stat.
+En ese sentido, para acceder a los datos a través de las API's web no es necesario instalar algún software. En su lugar, se realiza una petición web (una solicitud HTTP) por medio de una dirección URL específica provista por los sistemas informáticos de INEGI y Banxico. Al momento de llevar a cabo la consulta, los servidores procesan la petición y devuelven la información en formatos estructurados estándar de intercambio de datos web, principalmente JSON o JSON-Stat.
 
-Sin embargo, es importante señalar que ambos sistemas requieren que se lleve a cabo un registro en sus "portales de desarrolladores" para obtener un `token` de autenticación o clave de acceso digital, la cual viaja junto con la petición web para registar y validar el acceso del usuario.
+Sin embargo, es importante señalar que ambos sistemas requieren que se lleve a cabo un registro en sus "portales de desarrolladores" para obtener un `token` de autenticación, el cual viaja junto con la petición web para registar y validar el acceso del usuario.
 
-# Portal de desarrolladores de Banxico e INEGI.
+# Portal de desarrolladores de Banxico e INEGI
 
-A través de estos portales, los desarrolladores o analistas que requieren la automatización del proceso de extracción de información económica publicada por INEGI y Banxico, pueden acceder a los datos correspondientes.
+A través de estos portales, los desarrolladores o analistas que requieren automatizar el proceso de extracción de información económica publicada por INEGI y Banxico, pueden acceder a los datos correspondientes.
 
 - INEGI (BIE/BISE): 
 https://www.inegi.org.mx/servicios/api_indicadores.html
+https://www.inegi.org.mx/servicios/api-indicadores/
+
 
 - Banxico (SIE):
 https://www.banxico.org.mx/SieAPIRest/service/v1/
@@ -36,17 +38,19 @@ Para consultar la dirección URL de la información asociada a los indicadores, 
 
 Cualquier lenguaje de programación que tenga la capacidad de conectarse a internet (como Python, R o incluso macros avanzadas de Excel) puede consumir estas herramientas enviando peticiones HTTPS de forma remota.
 
-# Acceso al Token de autenticación para realizar las peticiones de información al API del BIE o SIE
+# Acceso al token de autenticación para realizar las peticiones de información a las API del BIE o SIE
 
-Antes de usar seriesMX, es indispensable consultar los siguientes enlaces para generar los token correspondientes: 
+Antes de consultar las API del BIE y el SIE, es indispensable consultar los siguientes enlaces para generar los token de autenticación correspondientes: 
 
 - INEGI (BIE/BISE): 
+
 https://www.inegi.org.mx/app/desarrolladores/generatoken/Usuarios/token_Verify
 
 - Banco de México (SIE):
+
 https://www.banxico.org.mx/SieAPIRest/service/v1/token
 
-Nota: en la práctica es posible generar más de un token, su propósito sólo es controlar el flujo de acceso a las API's desde los servidores de INEGI y Banxico.
+Nota: en la práctica es posible generar más de un token de autenticación, su propósito sólo es controlar el flujo de acceso a las API de INEGI y Banxico.
 
 
 ## Instalación del paquete seriesMX
@@ -57,9 +61,18 @@ pak::pak("carrascofernando032/seriesMX")
 library(seriesMX)
 ```
 
-## 1. Consultar los catálogos de los indicadores del BIE y SIE por medio de sus API, sin token
+## 1. Consultar el catálogo de los indicadores del BIE (INEGI) y del SIE (Banxico) por medio del paquete seriesMX
 
-Los catálogos se incluyen como data frames en la base del paquete. No es necesario descargar ni cargar algún archivo externo.
+Los catálogos denominados `catalogo_maestro_banxico` y `catalogo_maestro_inegi` se incluyen como data frames en la base del paquete seriesMX. No es necesario descargar ni cargar algún archivo externo.
+
+Es posible inspeccionarlos como data frames, filtrarlos y obtener sus claves o URL antes de solicitar los datos. Para consultar las tablas incluidas no es necesario registrar los token de autenticación; para descargar los datos sí es necesario.
+
+Estos catálogos están compuestos por: 221,047 indicadores con claves únicas del BIE (INEGI) y del SIE(Banxico).
+
+La contribución de INEGI representa el 40.51% de las claves; la de Banxico, el 59.49%. Esta composición combina indicadores del sector real con información monetaria y financiera.
+
+No implica que ambas fuentes tengan coberturas mutuamente excluyentes: pueden medir fenómenos relacionados o difundir series derivadas.
+
 
 | Objeto | Filas | Claves únicas | Columnas |
 | --- | ---: | ---: | ---: |
@@ -68,7 +81,9 @@ Los catálogos se incluyen como data frames en la base del paquete. No es necesa
 
 Las filas conservan las rutas temáticas de cada indicador. Una clave repetida no representa necesariamente otra serie: en estos catálogos, cada clave tiene una sola URL distinta.
 
-En el portal de desarrolladores de INEGI los indicadores se clasifican en una o más rutas temáticas denominadas segmento:
+## Catálogo de indicadores del BIE (INEGI)
+
+En el portal de desarrolladores de INEGI los indicadores están clasificados en una o más rutas temáticas denominadas segmento:
 
 | Segmento | Indicadores |
 | --- | ---: |
@@ -87,9 +102,13 @@ En el portal de desarrolladores de INEGI los indicadores se clasifican en una o 
 | `Minería` | 106 |
 | `Finanzas públicas` | 47 |
 
-En el portal de desarrolladores de Banco de México los indicadores se clasifican en una o más rutas temáticas denominadas sector:
+Fuente: cálculo directo sobre data/catalogo_maestro_inegi.rda del commit revisado. Una clave BIE y una clave SIE pertenecen a sistemas distintos.
 
-| Segmento | Indicadores |
+## Catálogo de indicadores del SIE (Banxico)
+
+Los indicadores del SIE (Banxico) están clasificados en una o más rutas temáticas denominadas sector:
+
+| Sector | Indicadores |
 | --- | ---: |
 | `Financiamiento e información financiera de intermediarios financieros` | 10,9247 |
 | `Balanza de pagos` | 14,596 |
@@ -112,6 +131,15 @@ En el portal de desarrolladores de Banco de México los indicadores se clasifica
 | `Información histórica del mercado cambiario y de valores` | 65 |
 | `Índices de Precios al Consumidor y UDIS` | 60 |
 
+Fuente: cálculo directo sobre data/catalogo_maestro_banxico.rda del commit revisado. Una clave BIE y una clave SIE pertenecen a sistemas distintos.
+
+Las 230,309 filas conservan asociaciones temáticas de los indicadores. Al contar una vez cada clave dentro de su fuente quedan 221,047 entradas de identificación. La diferencia es de 9,262 filas, equivalentes al 4.02% del total. Si se planificara una consulta histórica por clave, evitar la duplicidad de claves permitiría evitar las solicitudes repetidas.
+
+Las funciones del paquete seriesMX requieren utilizar el URL de los indicadores cuando encuentran varias filas para una clave, aun si comparten la misma dirección.
+
+Como mejora futura se evaluará resolver automáticamente una URL inequívoca y reservar el error para verdaderas ambigüedades, preservando la información temática.
+
+
 ```{r ejemplo_consulta_catalogos}
 
 #Paquetería necesaria:
@@ -131,9 +159,20 @@ buscar_clave_bie("736183")
 buscar_clave_sie("SF17908")
 ```
 
-## 2. Configurar los tokens de autenticación.
+Cada consulta recupera valores del servicio institucional en ese momento. Los catálogos incluidos son estáticos hasta que se reconstruyen y distribuyen: actualizar una serie mediante la API no actualiza automáticamente el catálogo instalado. Esta distinción es esencial para comunicar correctamente la funcionalidad del paquete seriesMX.
 
-Se recomienda guardar los tokens de autenticación en las variables de entorno `token_bie_get` y `token_sie_get`, por ejemplo en su archivo personal `.Renviron`. Es necesario reiniciar R después de editarlo.
+## Calidad y disponibilidad: lo que indican los registros en los catálogos del BIE y del SIE en el paquete seriesMX
+
+Fue exitoso el 100% de los resultados de la verificación de consulta de la información histórica de cada clave del `catalogo_maestro_inegi`. 
+
+El 99.8814% de las claves del `catalogo_maestro_banxico` exhibieron un resultado exitoso de verificación histórica. Por otro lado, 150 claves (0.1141%) carecían de valores numéricos válidos, y 6 claves presentaron una redirección HTTP 302 al momento de su consulta.
+
+La variable `api_ok` es donde se reporta el resultado de la verificación registrada, no bloquea nuevas consultas.
+
+
+## 2. Configurar los tokens de autenticación del BIE (INEGI) y del SIE (Banxico)
+
+Se recomienda guardar los token de autenticación en las variables de entorno `token_bie_get` y `token_sie_get` en el archivo personal `.Renviron`. Una vez registrados, será necesario reiniciar R.
 
 ```{r configuracion_renviron_tokens, eval = FALSE}
 # Escribir en la consola lo siguiente:
@@ -158,27 +197,30 @@ Este módulo está diseñado para demostrar cómo descargar y graficar diversas 
 
 ## ¿Qué hacen exactamente las funciones api_bie y api_sie?
 
-Consumen las API's de INEGI o Banxico (por ejemplo, consultando el tipo de cambio) para obtener información, toman los datos que reciben y los adaptan para que puedan ser usados, guardados o procesados por R, y estandarizan el formato de los datos (JSON o XML) controlando los errores, tiempos de espera y la seguridad (Tokens).
+Las funciones `api_bie()` y `api_sie()` consumen las API de INEGI o Banxico (por ejemplo, consultando el tipo de cambio) para obtener información, tomando los datos que reciben y adaptándolos para que puedan ser usados, guardados o procesados por R, estandarizando el formato de los datos (JSON o XML) controlando los errores, tiempos de espera y la seguridad (tokens).
 
-- API del Banco de Información Económica (BIE / INEGI): la función `api_bie()` automatiza las solicitudes de información a la API de INEGI utilizando el token de desarrollador.
-- API del Sistema de Información Económica (SIE / Banxico): la función `api_sie()` es equivalente a `api_bie()` para consultar información de Banco de México.
+- `api_bie()` automatiza las solicitudes de información a la API del BIE (INEGI) utilizando el token de desarrollador.
+
+- `api_sie()` es equivalente a `api_bie()` para consultar información del SIE (Banxico).
+
+Al momento de consultar información de las API se debe proporcionar exactamente uno de los argumentos: `url` o `clave`. Para conservar la misma regla de `api_bie()`, la función `api_sie()` pide usar una URL cuando encuentra varias filas para la clave, incluso si comparten URL: el argumento `[[1L]]` selecciona una sola URL.
+
+Por construcción del paquete seriesMX, las URL del `catalogo_maestro_banxico` terminan en `/datos`. La función `api_sie()` también acepta las URL anteriores sin ese sufijo cuando corresponden al catálogo.
+
+Ambas funciones del paquete, `api_bie()` y `api_sie()`, devuelven un data frame con tres columnas: `serie`, `fecha` y `observacion`. La función `api_bie()` conserva `fecha` como texto (por ejemplo, `2020/01`); `api_sie()` la entrega como `Date`. Los datos se ordenan de forma ascendente y los valores faltantes quedan como `NA`.
+
+## Data frames para la consulta de indicadores del BIE (INEGI) y del SIE (Banxico) por medio del paquete seriesMX
 
 En la ciencia de datos es común tener que unir tablas entre sí, pues un álisis no implica trabajar con una sola tabla o dataframe, al contrario, se suele trabajar con múltiples tablas y generalmente (casi siempre) se requiere combinarlas para dar respuesta a las preguntas que motivan el análisis.
 
-## Data frame
-Un data frame en R es una estructura de datos bidimensional (en forma de tabla con filas y columnas) que permite almacenar datos heterogéneos.Es el objeto más utilizado para el análisis estadístico y la manipulación de información en R, ya que funciona de forma similar a una hoja de cálculo de Excel.
+Un `data frame` en R es una estructura de datos bidimensional (en forma de tabla con filas y columnas) que permite almacenar datos heterogéneos.Es el objeto más utilizado para el análisis estadístico y la manipulación de información en R, ya que funciona de forma similar a una hoja de cálculo de Excel.
 
 Con un data frame se pueden implementar las herramientas intermedias del lenguaje de programación R con énfasis en la limpieza, manipulación de datos y visualizaciones avanzadas.
 
-Debido a la heterogenidad en la información que proviene de los servidores del Banco de México e INEGI (datos, metadatos, el nombre del indicador o la frecuencia de las observaciones) `api_bie()` y `api_sie()` estandarizan los data frames que resulten de utilizar estas funciones.
+Debido a la heterogenidad en la información que proviene de los servidores del Banco de México e INEGI (datos, metadatos, el nombre del indicador o la frecuencia de las observaciones) las funciones `api_bie()` y `api_sie()`, del paquete seriesMX, estandarizan la información que proviene de las API del BIE (INEGI) y del SIE (Banxico) y la convierten en un data frame.
 
-La idea fundamental es: agregar nuevas variables a un marco de datos a partir de observaciones coincidentes en otro.
+Si el servidor de Banxico devuelve cero observaciones, una redirección o una respuesta inválida, las funciones `api_bie()` y `api_sie()` explican el problema. Por otro lado, si devuelven registros sin valores numéricos, conservan los registros con `NA` y muestran una advertencia. 
 
-Considere el siguiente caso donde hay diferentes formatos en la columna fecha de dos series:
-- Data frame 1: "1992-08-01" (fecha diaria).
-- Data frame 2: "1992/08" (fecha mensual).
-
-Como primer paso se deben homologar las fechas al primer día de cada mes. Sin embargo, antes de unir los data frames es importante verificar que ambas series abarquen el mismo periodo de tiempo.
 
 ## Familia Join de la colección Tidyverse en R
 
@@ -188,19 +230,19 @@ Tidyverse, a través del paquete denominado dplyr, tiene una familia de funcione
 
 Para utilizar la función "left_join()" de Tidyverse, es necesario que las variables "fecha" tengan el mismo formato y, preferentemente, la misma clase (Date).
 
+La idea fundamental es: agregar nuevas variables a un marco de datos a partir de observaciones coincidentes en otro.
+
+Considere el siguiente caso donde hay diferentes formatos en la columna fecha de dos series:
+- Data frame 1: "1992-08-01" (fecha diaria).
+- Data frame 2: "1992/08" (fecha mensual).
+
+Como primer paso se deben homologar las fechas al primer día de cada mes. Sin embargo, antes de unir los data frames es importante verificar que ambas series abarquen el mismo periodo de tiempo.
+
 ## Graficar series de tiempo a partir de datos del BIE (INEGI) y del SIE (Banxico) con el paquete seriesMX
 
-La función "graficar_ts" de seriesMX automatiza la construcción de una gráfica de series de tiempo a partir de un data frame con una columna de fechas y una o más columnas numéricas (indicadores), como el resultado de unir con `left_join()` los data frames individuales devueltos por `api_bie()` y `api_sie()`.
+La función `graficar_ts` de seriesMX automatiza la construcción de una gráfica de series de tiempo a partir de un data frame con una columna de fechas y una o más columnas numéricas (indicadores), como el resultado de unir con `left_join()` los data frames individuales devueltos por `api_bie()` y `api_sie()` con la información de las API del BIE (INEGI) y del SIE (Banxico).
 
-Proporcione exactamente uno de los argumentos: `url` o `clave`. Para conservar la misma regla de `api_bie()`, `api_sie()` pide usar una URL cuando encuentra varias filas para la clave, incluso si comparten URL. `[[1L]]` selecciona una sola URL.
-
-Las URL del catálogo SIE ya terminan en `/datos`. `api_sie()` también acepta las URL anteriores sin ese sufijo cuando corresponden al catálogo.
-
-Ambas API devuelven tres columnas: `serie`, `fecha` y `observacion`. BIE conserva `fecha` como texto (por ejemplo, `2020/01`); SIE la entrega como `Date`. Los datos se ordenan de forma ascendente y los valores faltantes quedan como `NA`. Antes de unir series, homologa fechas y frecuencias.
-
-Si el servidor de Banxico devuelve cero observaciones, una redirección o una respuesta inválida, la función explica el problema. Si devuelve registros sin valores numéricos, conserva los registros con `NA` y muestra una advertencia. Los estados del catálogo son una fotografía de la verificación registrada, no bloquean nuevas consultas.
-
-`graficar_ts()` admite frecuencias mensual, trimestral y anual; no agrega automáticamente series diarias o quincenales.
+La función `graficar_ts()` admite frecuencias mensual, trimestral y anual; no agrega automáticamente series diarias o quincenales.
 
 ```{r ejemplo_integracion_series}
 #Paquetería necesaria.
@@ -250,15 +292,15 @@ graficar_ts(df = fix_fbcf,
 
 ```
 
-## 4. Transformar, resumir y graficar
+## 4. Transformar, resumir y graficar variaciones porcentuales
 
 Este módulo pretende proporcionar una metodología adecuada para el cálculo de tasas y variaciones porcentuales de las series de indicadores, evitando errores comunes de suma, resta, multiplicación y división directa de porcentajes.
 
 ## Función `estadisticos_ts()` del paquete seriesMX
 
-Con esta función es posible calcular estadísticos descriptivos de una o varias series de tasas de variación porcentual: número de observaciones, máximo, mínimo, media geométrica, media aritmética, mediana, desviación estándar, primer y tercer cuartil, rango intercuartílico, sesgo y curtosis. Además, con la función `comparar_est_ts()` puede generarse un panel de histogramas de los indicadores.
+Con esta función del paquete seriesMX es posible calcular estadísticos descriptivos de una o varias series de tasas de variación porcentual: número de observaciones, máximo, mínimo, media geométrica, media aritmética, mediana, desviación estándar, primer y tercer cuartil, rango intercuartílico, sesgo y curtosis. Además, con la función `comparar_est_ts()` puede generarse un panel de histogramas de los indicadores.
 
-La función `estadisticos_ts()` interpreta las columnas como tasas porcentuales y calcula una media geométrica de los factores `1 + x/100`; se puede usar `resumen()` para obtener medidas aritméticas de niveles.
+La función `estadisticos_ts()` interpreta las columnas como tasas porcentuales y calcula una media geométrica de los factores `1 + x/100`; se puede usar la función `resumen()` del paquete seriesMX para obtener medidas aritméticas de niveles.
 
 ```{r ejemplo-estadisticos_ts}
 
@@ -304,4 +346,26 @@ testthat::test_local(".")
 # Con devtools instalado:
 devtools::check()
 ```
-Fuentes de información del paquete seriesMX: `inegibie_catalogo_maestro.xlsx` y `banxicosie_catalogo_maestro.xlsx`, revisadas el 25 de noviembre de 2026. Los periodos y frecuencias del catálogo se conservan como información de referencia; los valores de las series se descargan en cada consulta.
+Fuentes de información del paquete seriesMX: `inegibie_catalogo_maestro.xlsx` y `banxicosie_catalogo_maestro.xlsx`, revisadas desde el día 20 de noviembre hasta el 25 de noviembre de 2026. Los periodos y frecuencias del catálogo se conservan como información de referencia; los valores de las series se descargan en cada consulta.
+
+## Fuentes
+
+Goodwin, M. (2026b, septiembre 28). What is an API (application programming interface)? https://www.ibm.com/think/topics/api
+
+SIE - API. (s. f.). https://www.banxico.org.mx/SieAPIRest/service/v1/doc/catalogoSeries#
+
+De Estadística Y, I. N. (s. f.). API del Banco de Indicadores. https://www.inegi.org.mx/servicios/api-indicadores/
+
+GitHub - rojoaldrette/DataAPIs: Este repositorio contiene la creación de funciones que permiten obtener bases de datos de las API’s de distintas instituciones. (s. f.). GitHub. https://github.com/rojoaldrette/DataAPIs
+
+US Census Bureau. (2024, 20 diciembre). Introduction to the Census Bureau Data API. Census.gov. https://www.census.gov/data/academy/courses/intro-to-the-census-bureau-data-api.html#1
+
+RPubs - API BANXICOR. (s. f.). https://rpubs.com/FernandoLazCardenas/1158295
+
+
+
+
+
+
+
+
